@@ -1,0 +1,6 @@
+{
+  "name": "Sole-Twin Retail Digital Twin",
+  "description": "Een live digital twin simulatie-dashboard voor schoenenwinkels met interactieve scenario-analyses, live-alerts en strategisch AI-advies.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
