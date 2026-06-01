@@ -463,7 +463,7 @@ export default function App() {
             <StoreIcon className="w-4 h-4 text-emerald-500" />
             Interactieve filiaal-twin plattegrond
           </h3>
-          <p className="text-[10px] text-slate-500 font-mono">Klik op een winkel-module om de microscoop te openen · alle bedragen per maand</p>
+          <p className="text-[10px] text-slate-500 font-mono">Klik op een winkel-module om de microscoop te openen · maandbedragen; 'Vandaag' is live, incl. btw</p>
         </div>
         <span className="text-[9px] text-slate-400 bg-white/5 px-2 py-0.5 rounded font-mono border border-white/10 uppercase tracking-widest font-semibold">
           Selectie: {selectedStore.city}
@@ -475,6 +475,9 @@ export default function App() {
         {currentStores.map((store) => {
           const isSelected = store.id === selectedStoreId;
           const rentMarginRatio = (store.rentPerSqm * store.squareMeters) / store.revenue;
+          const _h = now.getHours() + now.getMinutes() / 60;
+          const dayFrac = _h <= 9 ? 0 : _h >= 18 ? 1 : (_h - 9) / 9;            // share of the 09:00-18:00 day elapsed
+          const todayRevenue = Math.round((store.revenue / 26) * 1.21 * dayFrac); // monthly ex VAT -> daily, incl. 21% VAT, grown so far
 
           return (
             <div
@@ -524,6 +527,10 @@ export default function App() {
                   <span className={store.sizeBreaksCount > 20 ? "text-rose-400" : "text-slate-400"}>
                     {store.sizeBreaksCount}
                   </span>
+                </div>
+                <div className="flex justify-between text-[10px] font-mono mt-1 pt-1 border-t border-white/5">
+                  <span className="text-slate-500">Vandaag:</span>
+                  <span className="text-emerald-400 font-bold tabular-nums">€{todayRevenue.toLocaleString("nl-NL")}</span>
                 </div>
               </div>
 
