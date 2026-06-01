@@ -1133,7 +1133,7 @@ export default function App() {
               <div className="bg-[#050505]/70 p-3 border border-white/5 rounded">
                 <span className="text-[9px] text-zinc-500 font-mono block uppercase">Kapitaalbeslag</span>
                 <p className="text-sm font-semibold text-white mt-1">€{selectedStore.totalStockValue.toLocaleString("nl-NL")}</p>
-                <p className="text-[9px] text-zinc-650 font-mono mt-0.5">Financiële waarde</p>
+                <p className="text-[9px] text-zinc-650 font-mono mt-0.5">Inkoopwaarde excl. btw</p>
               </div>
               <div className="bg-[#050505]/70 p-3 border border-white/5 rounded">
                 <span className="text-[9px] text-zinc-500 font-mono block uppercase">Sell-through rate</span>
