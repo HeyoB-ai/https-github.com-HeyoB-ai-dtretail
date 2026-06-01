@@ -110,8 +110,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 8,
       returnRate: 9,
       
-      totalStockPairs: 4500,
-      totalStockValue: 145000,
+      totalStockPairs: 938,
+      totalStockValue: 51590,
       sellThroughRate: 58,
       inventoryTurnover: 4.8,
       deadStockPercent: 12,
@@ -169,8 +169,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 12,
       returnRate: 14,
       
-      totalStockPairs: 8500,
-      totalStockValue: 285000,
+      totalStockPairs: 1876,
+      totalStockValue: 103180,
       sellThroughRate: 64,
       inventoryTurnover: 5.2,
       deadStockPercent: 15,
@@ -228,8 +228,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 18,
       returnRate: 16,
       
-      totalStockPairs: 7200,
-      totalStockValue: 210000,
+      totalStockPairs: 1501,
+      totalStockValue: 82555,
       sellThroughRate: 52,
       inventoryTurnover: 3.9,
       deadStockPercent: 24, // High deadstock
@@ -287,8 +287,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 6,
       returnRate: 7,
       
-      totalStockPairs: 3800,
-      totalStockValue: 115000,
+      totalStockPairs: 750,
+      totalStockValue: 41250,
       sellThroughRate: 61,
       inventoryTurnover: 4.9,
       deadStockPercent: 8,
@@ -346,8 +346,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 10,
       returnRate: 10,
       
-      totalStockPairs: 4900,
-      totalStockValue: 158000,
+      totalStockPairs: 1034,
+      totalStockValue: 56870,
       sellThroughRate: 54,
       inventoryTurnover: 4.1,
       deadStockPercent: 18,
