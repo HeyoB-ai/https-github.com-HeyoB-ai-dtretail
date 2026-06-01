@@ -185,6 +185,18 @@ export default function App() {
   // Selected store microscope tabs
   const [activeTab, setActiveTab] = useState<string>("vloer");
 
+  // Tijdsbewuste personeelsbezetting (RFID inkloktijden) consistent met openingstijd
+  const STAFF_NAMES = ["Sander", "Lisa", "Arjan", "Fatima", "Tom", "Noa", "Joost", "Esra", "Daan", "Maud"];
+  const CHECKIN_TIMES = ["09:02", "09:08", "09:14", "12:30", "13:30"];
+  const staffIdx = Math.max(0, currentStores.findIndex(s => s.id === selectedStore.id));
+  const toMin = (t) => parseInt(t.slice(0, 2)) * 60 + parseInt(t.slice(3, 5));
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const roster = CHECKIN_TIMES.map((t, i) => ({ name: STAFF_NAMES[(staffIdx * 2 + i) % STAFF_NAMES.length], checkIn: t }));
+  const clockedIn = isOpenNow ? roster.filter(p => nowMin >= toMin(p.checkIn)) : [];
+  const staffLabel = clockedIn.length
+    ? clockedIn.map(p => p.name + " (" + p.checkIn + ")").join(", ")
+    : (isOpenNow ? "Nog niemand ingeklokt vandaag" : "Geen medewerkers ingeklokt — winkel gesloten");
+
   // 3. AI Strategic Advisor Chat Drawer
   const [adviceText, setAdviceText] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
@@ -966,14 +978,14 @@ export default function App() {
                     </span>
                     <div>
                       <p className="text-xs font-bold text-white font-sans">Shift aanwezigheid</p>
-                      <p className="text-[10px] text-slate-400 font-sans">Geregistreerde check-ins</p>
+                      <p className="text-[10px] text-slate-400 font-sans">{clockedIn.length} medewerker(s) ingeklokt</p>
                     </div>
                   </div>
 
                   <div className="pt-1.5 border-t border-white/5 text-[11px] font-mono leading-relaxed">
                     <p className="text-slate-500">Live ingeklokte medewerkers:</p>
                     <p className="text-white mt-1.5 bg-white/5 p-2 rounded border border-white/5 text-center text-xs">
-                      {selectedStore.staffCheckIns}
+                      {staffLabel}
                     </p>
                   </div>
                 </div>
