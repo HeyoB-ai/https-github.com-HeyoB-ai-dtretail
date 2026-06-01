@@ -1274,6 +1274,22 @@ export default function App() {
     </div>
   );
 
+  // Inline markdown -> React nodes (bold / italic)
+  const renderInline = (text) => {
+    const nodes = [];
+    const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+    let last = 0; let m; let key = 0;
+    while ((m = regex.exec(text)) !== null) {
+      if (m.index > last) nodes.push(text.slice(last, m.index));
+      const tok = m[0];
+      if (tok.startsWith("**")) nodes.push(<strong key={key++} className="font-semibold text-white">{tok.slice(2, -2)}</strong>);
+      else nodes.push(<em key={key++} className="text-slate-400 not-italic">{tok.slice(1, -1)}</em>);
+      last = m.index + tok.length;
+    }
+    if (last < text.length) nodes.push(text.slice(last));
+    return nodes;
+  };
+
   // Strategic AI advisor panel (advisor)
   const advisorPanel = (
     <div className="bg-[#050505]/40 border border-white/5 p-6 rounded relative space-y-4">
@@ -1307,35 +1323,50 @@ export default function App() {
         </button>
       </div>
 
-      <div className="bg-[#050505] p-5 rounded border border-white/5 font-mono text-xs leading-relaxed max-h-[400px] overflow-y-auto custom-scrollbar shadow-inner">
+      <div className="bg-[#050505] p-5 rounded border border-white/5 font-sans text-[13px] leading-relaxed max-h-[400px] overflow-y-auto custom-scrollbar shadow-inner">
         {isAnalyzing ? (
           <div className="space-y-3 py-6 text-center text-slate-500">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto text-emerald-500" />
             <p className="animate-pulse">Gemini 3.5-Engine herrekent scenario variabelen & marge prognose...</p>
           </div>
         ) : adviceText ? (
-          <div className="text-slate-300 workspace-advisor-docs space-y-4">
-            {/* Convert basic markdown items */}
-            {adviceText.split("\n\n").map((part, pIdx) => {
-              if (part.startsWith("### ")) {
-                return <h3 key={pIdx} className="text-sm font-bold text-emerald-400 pt-2 font-sans">{part.replace("### ", "")}</h3>;
-              }
-              if (part.startsWith("#### ")) {
-                return <h4 key={pIdx} className="text-xs font-bold text-white border-b border-white/5 pb-1 mt-3 font-sans uppercase tracking-wider">{part.replace("#### ", "")}</h4>;
-              }
-              if (part.startsWith("- ") || part.startsWith("* ")) {
-                return (
-                  <ul key={pIdx} className="list-disc pl-5 space-y-1.5 text-slate-300">
-                    {part.split("\n").map((line, lIdx) => (
-                      <li key={lIdx} className="leading-relaxed">
-                        {line.replace(/^[\*\-]\s+/, "")}
-                      </li>
-                    ))}
-                  </ul>
-                );
-              }
-              return <p key={part} className="leading-relaxed text-[11px] font-sans text-slate-300">{part}</p>;
-            })}
+          <div className="text-slate-300 workspace-advisor-docs">
+            {(() => {
+              const out = [];
+              let bullets = [];
+              let key = 0;
+              const flushBullets = () => {
+                if (bullets.length > 0) {
+                  const items = bullets;
+                  out.push(
+                    <ul key={`ul-${key++}`} className="list-disc pl-5 space-y-1 my-1">
+                      {items.map((b, i) => (
+                        <li key={i} className="leading-relaxed">{renderInline(b)}</li>
+                      ))}
+                    </ul>
+                  );
+                  bullets = [];
+                }
+              };
+              adviceText.split("\n").forEach((line) => {
+                if (line.startsWith("### ")) {
+                  flushBullets();
+                  out.push(<h3 key={`h3-${key++}`} className="text-sm font-semibold text-emerald-400 mt-3 mb-1">{renderInline(line.slice(4))}</h3>);
+                } else if (line.startsWith("#### ")) {
+                  flushBullets();
+                  out.push(<h4 key={`h4-${key++}`} className="text-xs font-semibold text-white border-b border-white/10 pb-1 mt-3 mb-1">{renderInline(line.slice(5))}</h4>);
+                } else if (line.startsWith("- ") || line.startsWith("* ")) {
+                  bullets.push(line.slice(2));
+                } else if (line.trim() === "") {
+                  flushBullets();
+                } else {
+                  flushBullets();
+                  out.push(<p key={`p-${key++}`} className="leading-relaxed my-1.5">{renderInline(line)}</p>);
+                }
+              });
+              flushBullets();
+              return out;
+            })()}
           </div>
         ) : (
           <div className="text-center py-8 text-slate-500">
