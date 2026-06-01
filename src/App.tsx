@@ -243,8 +243,8 @@ export default function App() {
 
   const NAV_ITEMS = [
     { id: "dashboard", label: "Dashboard",    icon: BarChart,   title: "Executive Dashboard",      subtitle: "Ketenoverzicht • realtime KPI's & signalen" },
-    { id: "scenarios", label: "Scenario's",   icon: Activity,   title: "Scenario's & Simulatie",   subtitle: "What-if arena • draai aan de parameters" },
     { id: "stores",    label: "Winkels",      icon: StoreIcon,  title: "Winkel-Microscoop",        subtitle: "Diepe twin per vestiging" },
+    { id: "scenarios", label: "Scenario's",   icon: Activity,   title: "Scenario's & Simulatie",   subtitle: "What-if arena • draai aan de parameters" },
     { id: "advisor",   label: "AI-Adviseur",  icon: Sparkles,   title: "Strategische AI-Adviseur", subtitle: "Advies op basis van de live twin-data" },
     { id: "data",      label: "Databronnen",  icon: Database,   title: "Databronnen & Logboek",    subtitle: "Koppelingen en simulator-ledger" },
   ];
