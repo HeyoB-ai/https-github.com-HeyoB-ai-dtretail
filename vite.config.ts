@@ -6,6 +6,12 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    css: {
+      // Tailwind v4 is handled by the @tailwindcss/vite plugin above.
+      // Pass an inline (empty) PostCSS config so Vite does NOT walk up the
+      // directory tree and pick up an unrelated parent postcss.config.js.
+      postcss: {},
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
