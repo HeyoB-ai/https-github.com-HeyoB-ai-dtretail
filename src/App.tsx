@@ -80,6 +80,13 @@ function renderAdvice(md) {
   return out;
 }
 
+const storeActivity = (date) => {
+  const h = date.getHours() + date.getMinutes() / 60;
+  if (h < 9 || h >= 18) return 0;            // closed
+  const x = (h - 9) / 9;                      // 0..1 across the day
+  return 0.35 + 0.65 * Math.sin(Math.PI * x); // busier around midday
+};
+
 export default function App() {
   // 1. Core States
   const baseStores = useMemo(() => getInitialStoresData(), []);
@@ -105,10 +112,34 @@ export default function App() {
     setLogs(prev => [`[${time}] ${msg}`, ...prev.slice(0, 19)]);
   };
 
+  // Live klok + activiteits-tick die de winkelvloer-tellers laat fluctueren
+  const [now, setNow] = useState<Date>(new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const [tick, setTick] = useState(0);
+  useEffect(() => { const t = setInterval(() => setTick(v => v + 1), 4000); return () => clearInterval(t); }, []);
+  const isOpenNow = storeActivity(now) > 0;
+
   // Derive simulated stores from base data and live params
   const currentStores = useMemo(() => {
     return runSimulation(baseStores, params);
   }, [baseStores, params]);
+
+  // Live versie die uitsluitend de drie vloer-tellers laat variëren (financiële KPI's blijven stabiel)
+  const liveStores = useMemo(() => {
+    const act = storeActivity(now);
+    return currentStores.map((s, idx) => {
+      const wob = (base, seed) => act === 0 ? 0 : Math.max(0, Math.round(base * act * (1 + 0.15 * Math.sin((tick + seed + idx * 2) / 2.5))));
+      return {
+        ...s,
+        customersInside: wob(s.customersInside, 1),
+        windowShoppersLooking: wob(s.windowShoppersLooking, 4),
+        windowShoppersWalkedBy: wob(s.windowShoppersWalkedBy, 7),
+      };
+    });
+  }, [currentStores, tick, now]);
 
   // Derive warnings and alerts based on current simulation outcome
   const currentAlerts = useMemo(() => {
@@ -148,8 +179,8 @@ export default function App() {
   // 2. Selected Store microscope
   const [selectedStoreId, setSelectedStoreId] = useState<string>("utrecht-oudegracht");
   const selectedStore = useMemo(() => {
-    return currentStores.find(s => s.id === selectedStoreId) || currentStores[0];
-  }, [currentStores, selectedStoreId]);
+    return liveStores.find(s => s.id === selectedStoreId) || liveStores[0];
+  }, [liveStores, selectedStoreId]);
 
   // Selected store microscope tabs
   const [activeTab, setActiveTab] = useState<string>("vloer");
@@ -278,13 +309,8 @@ export default function App() {
   // Sync state data sources count
   const dataSourcesList = useMemo(() => getDataSources(), []);
 
-  // --- Navigatie: actief scherm + live klok (toegevoegd voor de zijbalk-layout) ---
+  // --- Navigatie: actief scherm (zijbalk-layout) ---
   const [activeScreen, setActiveScreen] = useState<string>("dashboard");
-  const [now, setNow] = useState<Date>(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
 
   const NAV_ITEMS = [
     { id: "dashboard", label: "Dashboard",    icon: BarChart,   title: "Executive dashboard",      subtitle: "Ketenoverzicht • realtime KPI's & signalen" },
@@ -913,8 +939,8 @@ export default function App() {
                       <StoreIcon className="w-6 h-6 text-emerald-500" />
                     </span>
                     <div>
-                      <p className="text-xs font-bold text-white uppercase">Winkel status: GEOPEND</p>
-                      <p className="text-[10px] text-emerald-400 font-sans">Alarm succesvol uitgeschakeld</p>
+                      <p className={`text-xs font-bold ${isOpenNow ? "text-emerald-400" : "text-rose-400"}`}>Winkel status: {isOpenNow ? "geopend" : "gesloten"}</p>
+                      <p className={`text-[10px] font-sans ${isOpenNow ? "text-emerald-400" : "text-slate-400"}`}>{isOpenNow ? "Alarm uitgeschakeld" : "Alarm ingeschakeld"}</p>
                     </div>
                   </div>
 
@@ -988,13 +1014,13 @@ export default function App() {
                   <div className="flex justify-between text-xs font-mono">
                     <span className="text-slate-400">Etalage attractiegraad (percentage passanten die stoppen):</span>
                     <span className="text-emerald-400 font-bold">
-                      {Math.round((selectedStore.windowShoppersLooking / (selectedStore.windowShoppersLooking + selectedStore.windowShoppersWalkedBy)) * 100)}%
+                      {Math.round((selectedStore.windowShoppersLooking / (selectedStore.windowShoppersLooking + selectedStore.windowShoppersWalkedBy || 1)) * 100)}%
                     </span>
                   </div>
                   <div className="w-full bg-white/5 h-2 rounded overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 rounded transition-all duration-300"
-                      style={{ width: `${Math.round((selectedStore.windowShoppersLooking / (selectedStore.windowShoppersLooking + selectedStore.windowShoppersWalkedBy)) * 100)}%` }}
+                      style={{ width: `${Math.round((selectedStore.windowShoppersLooking / (selectedStore.windowShoppersLooking + selectedStore.windowShoppersWalkedBy || 1)) * 100)}%` }}
                     />
                   </div>
                 </div>
