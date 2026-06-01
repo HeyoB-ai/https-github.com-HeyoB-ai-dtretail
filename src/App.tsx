@@ -35,6 +35,51 @@ import {
 import { Store, SimulationParams, Alert, DataSource } from "./types";
 import { getInitialStoresData, runSimulation, getLiveAlerts, getDataSources } from "./data";
 
+function renderInline(text, kp) {
+  const nodes = [];
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  let last = 0, m, k = 0;
+  while ((m = regex.exec(text)) !== null) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+    const tok = m[0];
+    if (tok.startsWith("**")) nodes.push(<strong key={kp + "-" + k++} className="font-semibold text-white">{tok.slice(2, -2)}</strong>);
+    else nodes.push(<em key={kp + "-" + k++} className="not-italic text-slate-400">{tok.slice(1, -1)}</em>);
+    last = m.index + tok.length;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
+}
+
+function renderAdvice(md) {
+  const lines = (md || "").split("\n");
+  const out = [];
+  let bullets = [];
+  const flush = (i) => {
+    if (bullets.length) { out.push(<ul key={"ul" + i} className="list-disc pl-5 space-y-1 my-2 marker:text-emerald-500 text-[13px] text-slate-300">{bullets}</ul>); bullets = []; }
+  };
+  const isEmoji = (s) => /^\p{Extended_Pictographic}/u.test(s);
+  const sev = (line) => {
+    if (line.startsWith("🚨") || line.startsWith("❌") || line.startsWith("📉")) return "border-rose-500/60 bg-rose-500/5";
+    if (line.startsWith("⚠️") || line.startsWith("🤒") || line.startsWith("🌧️")) return "border-amber-500/60 bg-amber-500/5";
+    if (line.startsWith("✅") || line.startsWith("🔄") || line.startsWith("☀️")) return "border-emerald-500/60 bg-emerald-500/5";
+    return "border-white/10 bg-white/[0.02]";
+  };
+  lines.forEach((raw, i) => {
+    const line = raw.trim();
+    if (!line) { flush(i); return; }
+    if (line.startsWith("### ")) { flush(i); out.push(<h3 key={i} className="text-base font-semibold text-emerald-400 mb-3">{renderInline(line.slice(4), "h" + i)}</h3>); return; }
+    if (line.startsWith("#### ")) { flush(i); out.push(<h4 key={i} className="flex items-center gap-2 text-[13px] font-semibold text-white mt-6 mb-2"><span className="w-1 h-4 bg-emerald-500 rounded-full shrink-0" />{renderInline(line.slice(5), "s" + i)}</h4>); return; }
+    if (line.startsWith("- ") || line.startsWith("* ")) { bullets.push(<li key={i} className="leading-relaxed">{renderInline(line.slice(2), "b" + i)}</li>); return; }
+    flush(i);
+    if (line.startsWith("*Advies:*")) { out.push(<div key={i} className="flex gap-2 items-baseline ml-2 pl-3 border-l-2 border-emerald-500/50 py-1 mb-2"><span className="text-emerald-400 text-[10px] font-bold uppercase tracking-wider shrink-0">Advies</span><span className="text-[12px] text-slate-300 leading-relaxed">{renderInline(line.replace(/^\*Advies:\*\s*/, ""), "a" + i)}</span></div>); return; }
+    if (line.startsWith("*") && line.endsWith("*") && !line.startsWith("**")) { out.push(<p key={i} className="text-[11px] text-slate-500 bg-white/[0.03] border border-white/5 rounded px-3 py-2 mb-3 leading-relaxed">{renderInline(line.slice(1, -1), "n" + i)}</p>); return; }
+    if (isEmoji(line) && line.includes("**")) { out.push(<div key={i} className={"rounded-md border-l-2 px-3 py-2 mb-1 " + sev(line)}><p className="text-[12px] text-slate-200 leading-relaxed">{renderInline(line, "f" + i)}</p></div>); return; }
+    out.push(<p key={i} className="text-[12px] text-slate-300 leading-relaxed my-1.5">{renderInline(line, "p" + i)}</p>);
+  });
+  flush("end");
+  return out;
+}
+
 export default function App() {
   // 1. Core States
   const baseStores = useMemo(() => getInitialStoresData(), []);
@@ -1274,22 +1319,6 @@ export default function App() {
     </div>
   );
 
-  // Inline markdown -> React nodes (bold / italic)
-  const renderInline = (text) => {
-    const nodes = [];
-    const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
-    let last = 0; let m; let key = 0;
-    while ((m = regex.exec(text)) !== null) {
-      if (m.index > last) nodes.push(text.slice(last, m.index));
-      const tok = m[0];
-      if (tok.startsWith("**")) nodes.push(<strong key={key++} className="font-semibold text-white">{tok.slice(2, -2)}</strong>);
-      else nodes.push(<em key={key++} className="text-slate-400 not-italic">{tok.slice(1, -1)}</em>);
-      last = m.index + tok.length;
-    }
-    if (last < text.length) nodes.push(text.slice(last));
-    return nodes;
-  };
-
   // Strategic AI advisor panel (advisor)
   const advisorPanel = (
     <div className="bg-[#050505]/40 border border-white/5 p-6 rounded relative space-y-4">
@@ -1323,50 +1352,15 @@ export default function App() {
         </button>
       </div>
 
-      <div className="bg-[#050505] p-5 rounded border border-white/5 font-sans text-[13px] leading-relaxed max-h-[400px] overflow-y-auto custom-scrollbar shadow-inner">
+      <div className="bg-[#050505] px-5 pt-6 pb-5 rounded border border-white/5 font-sans text-[13px] leading-relaxed max-h-[460px] overflow-y-auto custom-scrollbar shadow-inner">
         {isAnalyzing ? (
           <div className="space-y-3 py-6 text-center text-slate-500">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto text-emerald-500" />
             <p className="animate-pulse">Gemini 3.5-engine herrekent scenario variabelen & marge prognose...</p>
           </div>
         ) : adviceText ? (
-          <div className="text-slate-300 workspace-advisor-docs">
-            {(() => {
-              const out = [];
-              let bullets = [];
-              let key = 0;
-              const flushBullets = () => {
-                if (bullets.length > 0) {
-                  const items = bullets;
-                  out.push(
-                    <ul key={`ul-${key++}`} className={`list-disc pl-5 space-y-1 mb-2 ${out.length === 0 ? "mt-0" : "mt-2"}`}>
-                      {items.map((b, i) => (
-                        <li key={i} className="leading-relaxed">{renderInline(b)}</li>
-                      ))}
-                    </ul>
-                  );
-                  bullets = [];
-                }
-              };
-              adviceText.split("\n").forEach((line) => {
-                if (line.startsWith("### ")) {
-                  flushBullets();
-                  out.push(<h3 key={`h3-${key++}`} className={`text-sm font-semibold text-emerald-400 mb-1 ${out.length === 0 ? "mt-0" : "mt-4"}`}>{renderInline(line.slice(4))}</h3>);
-                } else if (line.startsWith("#### ")) {
-                  flushBullets();
-                  out.push(<h4 key={`h4-${key++}`} className={`text-xs font-semibold text-white mb-1 ${out.length === 0 ? "mt-0" : "mt-4"}`}>{renderInline(line.slice(5))}</h4>);
-                } else if (line.startsWith("- ") || line.startsWith("* ")) {
-                  bullets.push(line.slice(2));
-                } else if (line.trim() === "") {
-                  flushBullets();
-                } else {
-                  flushBullets();
-                  out.push(<p key={`p-${key++}`} className={`leading-relaxed mb-2 ${out.length === 0 ? "mt-0" : "mt-2"}`}>{renderInline(line)}</p>);
-                }
-              });
-              flushBullets();
-              return out;
-            })()}
+          <div className="text-slate-300">
+            {renderAdvice(adviceText)}
           </div>
         ) : (
           <div className="text-center py-8 text-slate-500">
