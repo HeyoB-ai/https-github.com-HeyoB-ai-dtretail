@@ -24,10 +24,10 @@ const generateHeuristicAdvice = (storesData, params) => {
   const sickStores = storesData.filter((s) => s.sickLeavePercent > 5).map((s) => s.name);
   const redStores = storesData.filter((s) => s.status === "RED").map((s) => s.name);
 
-  let markdown = `### 🤖 Lokale AI Heuristische Twin Adviseur\n\n`;
-  markdown += `*Let op: de live verbinding met de Gemini API is momenteel niet actief (geen API-sleutel in Secrets). Het systeem draait op de lokale heuristische 'Digital Twin Core-Engine'.*\n\n`;
+  let markdown = `### 🤖 Lokale AI heuristische twin-adviseur\n\n`;
+  markdown += `*Let op: de live verbinding met de Gemini API is momenteel niet actief (geen API-sleutel in Secrets). Het systeem draait op de lokale heuristische 'Digital Twin core-engine'.*\n\n`;
 
-  markdown += `#### 📊 Algemene Status Analyse\n`;
+  markdown += `#### 📊 Algemene statusanalyse\n`;
   markdown += `U heeft momenteel **${storesData.length} winkels** geconfigureerd in uw simulatiemodel. \n`;
   if (redStores.length > 0) {
     markdown += `🚨 **Kritiek:** Vestiging **${redStores.join(", ")}** draait met een negatieve EBITDA. Direct ingrijpen is noodzakelijk om cash leak te voorkomen.\n\n`;
@@ -35,21 +35,21 @@ const generateHeuristicAdvice = (storesData, params) => {
     markdown += `✅ **Gezond:** Alle winkels draaien momenteel met een positieve EBITDA-bijdrage. Goed operationeel beheer!\n\n`;
   }
 
-  markdown += `#### 🔍 Knelpunten & Aanbevelingen\n`;
+  markdown += `#### 🔍 Knelpunten & aanbevelingen\n`;
 
   if (params.weatherScenario === "rainy") {
-    markdown += `🌧️ **Weersinvloed (Regenachtig):** De fysieke passantenstroom is met 15% gedaald. Laarzen en onderhoudsproducten verkopen sterk, maar sneakers liggen stil. \n`;
+    markdown += `🌧️ **Weersinvloed (regenachtig):** De fysieke passantenstroom is met 15% gedaald. Laarzen en onderhoudsproducten verkopen sterk, maar sneakers liggen stil. \n`;
     markdown += `*Advies:* Promoot onderhoudssprays bij elke kassa-transactie. Verhoog de online advertentieradius voor de webshop.\n\n`;
   } else if (params.weatherScenario === "sunny") {
-    markdown += `☀️ **Weersinvloed (Zonnig):** Straatdrukte stijgt (+15%). Sneakers vliegen de deur uit, maar winterschoenen liggen stil.\n`;
+    markdown += `☀️ **Weersinvloed (zonnig):** Straatdrukte stijgt (+15%). Sneakers vliegen de deur uit, maar winterschoenen liggen stil.\n`;
     markdown += `*Advies:* Richt de etalages in voor lichte zomersneakers. Zorg dat de weekendbezetting maximaal is vanwege verhoogde passage.\n\n`;
   }
 
   if (params.runInterStoreTransfers) {
-    markdown += `🔄 **Interne Overplaatsingen (ACTIEF):** Uitstekende keuze! Door overschotvoorraad te verplaatsen naar Utrecht en Rotterdam lossen we grote maatbreuken op maat 42 op. \n`;
+    markdown += `🔄 **Interne overplaatsingen (ACTIEF):** Uitstekende keuze! Door overschotvoorraad te verplaatsen naar Utrecht en Rotterdam lossen we grote maatbreuken op maat 42 op. \n`;
     markdown += `*Effect:* Conversieratio stijgt landelijk met gemiddeld **+2.5%** en de 'nee-verkoop' daalt met **90%**. Dit levert directe margebijdrage.\n\n`;
   } else {
-    markdown += `⚠️ **Interne Overplaatsingen (INACTIEF):** Er is een scheve voorraadverdeling! Rotterdam heeft dode voorraad en Utrecht kampt met een nee-verkoop op maat 42. \n`;
+    markdown += `⚠️ **Interne overplaatsingen (INACTIEF):** Er is een scheve voorraadverdeling! Rotterdam heeft dode voorraad en Utrecht kampt met een nee-verkoop op maat 42. \n`;
     markdown += `*Advies:* Activeer de "Inter-store Stock Transfers" simulation-schuifregelaar om deze maatbreuken direct te corrigeren.\n\n`;
   }
 
@@ -63,8 +63,8 @@ const generateHeuristicAdvice = (storesData, params) => {
     markdown += `*Advies:* Verplaats resources of huur een weekendkracht in om de conversie op peil te houden.\n\n`;
   }
 
-  markdown += `#### 💡 Strategische Simulatie Projectie\n`;
-  markdown += `- **Huidige Prijsmarge correctie:** ${params.priceAdjustment > 0 ? `+${params.priceAdjustment}%` : `${params.priceAdjustment}%`}. Dit heeft een direct effect op uw landelijke **GMROI**.`;
+  markdown += `#### 💡 Strategische simulatieprojectie\n`;
+  markdown += `- **Huidige prijsmarge-correctie:** ${params.priceAdjustment > 0 ? `+${params.priceAdjustment}%` : `${params.priceAdjustment}%`}. Dit heeft een direct effect op uw landelijke **GMROI**.`;
 
   return markdown;
 };

@@ -242,11 +242,11 @@ export default function App() {
   }, []);
 
   const NAV_ITEMS = [
-    { id: "dashboard", label: "Dashboard",    icon: BarChart,   title: "Executive Dashboard",      subtitle: "Ketenoverzicht • realtime KPI's & signalen" },
-    { id: "stores",    label: "Winkels",      icon: StoreIcon,  title: "Winkel-Microscoop",        subtitle: "Diepe twin per vestiging" },
-    { id: "scenarios", label: "Scenario's",   icon: Activity,   title: "Scenario's & Simulatie",   subtitle: "What-if arena • draai aan de parameters" },
-    { id: "advisor",   label: "AI-Adviseur",  icon: Sparkles,   title: "Strategische AI-Adviseur", subtitle: "Advies op basis van de live twin-data" },
-    { id: "data",      label: "Databronnen",  icon: Database,   title: "Databronnen & Logboek",    subtitle: "Koppelingen en simulator-ledger" },
+    { id: "dashboard", label: "Dashboard",    icon: BarChart,   title: "Executive dashboard",      subtitle: "Ketenoverzicht • realtime KPI's & signalen" },
+    { id: "stores",    label: "Winkels",      icon: StoreIcon,  title: "Winkel-microscoop",        subtitle: "Diepe twin per vestiging" },
+    { id: "scenarios", label: "Scenario's",   icon: Activity,   title: "Scenario's & simulatie",   subtitle: "What-if arena • draai aan de parameters" },
+    { id: "advisor",   label: "AI-adviseur",  icon: Sparkles,   title: "Strategische AI-adviseur", subtitle: "Advies op basis van de live twin-data" },
+    { id: "data",      label: "Databronnen",  icon: Database,   title: "Databronnen & logboek",    subtitle: "Koppelingen en simulator-ledger" },
   ];
   const activeMeta = NAV_ITEMS.find(n => n.id === activeScreen) || NAV_ITEMS[0];
   const scenarioLabel =
@@ -378,7 +378,7 @@ export default function App() {
         <div>
           <h3 className="text-xs uppercase tracking-widest text-slate-400 font-sans flex items-center gap-1.5 font-semibold">
             <StoreIcon className="w-4 h-4 text-emerald-500" />
-            Interactieve Filiaal-Twin Plattegrond
+            Interactieve filiaal-twin plattegrond
           </h3>
           <p className="text-[10px] text-slate-500 font-mono">Klik op een winkel-module om de microscoop te openen · alle bedragen per maand</p>
         </div>
@@ -467,7 +467,7 @@ export default function App() {
       <div className="flex justify-between items-center pb-2 border-b border-white/5">
         <h3 className="text-xs uppercase tracking-widest text-slate-400 font-sans flex items-center gap-1.5 font-semibold">
           <ShieldAlert className="w-4 h-4 text-emerald-500" />
-          Signalen & Live Alerts ({activeAlerts.length})
+          Signalen & live alerts ({activeAlerts.length})
         </h3>
         <span className="text-[10px] text-slate-500 font-mono font-semibold uppercase tracking-wider">Dringend</span>
       </div>
@@ -559,14 +559,14 @@ export default function App() {
       <div className="flex justify-between items-center pb-2 border-b border-white/5">
         <h3 className="text-xs uppercase tracking-widest text-slate-400 font-sans flex items-center gap-1.5 font-semibold">
           <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-          Twin Parameter Sandbox
+          Twin parameter sandbox
         </h3>
         <span className="text-[9px] bg-white/5 text-slate-400 font-mono px-2 py-0.5 rounded uppercase tracking-wider font-semibold border border-white/10">What-If Arena</span>
       </div>
 
       {/* Bedrijfsscenario Dropdown Selector (User Requested Menu Choice) */}
       <div className="space-y-1.5 pb-3 border-b border-white/5">
-        <label className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider block">Kies Bedrijfssite-Scenario (Menukeuze):</label>
+        <label className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider block">Kies bedrijfssite-scenario (menukeuze):</label>
         <select
           value={
             params.weatherScenario === "rainy"
@@ -582,10 +582,10 @@ export default function App() {
           }}
           className="w-full bg-[#050505] border border-white/10 rounded px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
         >
-          <option value="normal">🏢 Standaard Bedrijfsvoering (Basislijn - Normale Omstandigheden)</option>
-          <option value="rainy_weekend">⛈️ Regenachtig Weekend (Laarzenverkoop spikes, sneaker dip)</option>
-          <option value="sale_clearance">🏷️ Grote Uitverkoop Boost (Hoge kortingen, extra logistieke bezetting)</option>
-          <option value="optimized_staff">⚙️ Operationele Optimalisatie (Matentransfers actief, prijsaanpassing)</option>
+          <option value="normal">🏢 Standaard bedrijfsvoering (basislijn - normale omstandigheden)</option>
+          <option value="rainy_weekend">⛈️ Regenachtig weekend (laarzenverkoop spikes, sneaker dip)</option>
+          <option value="sale_clearance">🏷️ Grote uitverkoop boost (hoge kortingen, extra logistieke bezetting)</option>
+          <option value="optimized_staff">⚙️ Operationele optimalisatie (matentransfers actief, prijsaanpassing)</option>
         </select>
         <p className="text-[9px] text-[#8f8f8f] leading-normal font-sans pt-0.5">
           Dit snelmenu simuleert directe externe invloeden en zet de bijbehorende parameters direct juist.
@@ -595,7 +595,7 @@ export default function App() {
       {/* Slider 1: Kortingsboost */}
       <div className="space-y-1.5">
         <div className="flex justify-between text-[11px] font-mono">
-          <span className="text-slate-400">Globale Kortingsboost:</span>
+          <span className="text-slate-400">Globale kortingsboost:</span>
           <span className="text-emerald-400 font-bold">+{params.globalDiscountBoost}%</span>
         </div>
         <input
@@ -620,7 +620,7 @@ export default function App() {
       {/* Slider 2: Personeelsplanning */}
       <div className="space-y-1.5">
         <div className="flex justify-between text-[11px] font-mono">
-          <span className="text-slate-400">Vloerbezetting Shift Ratio:</span>
+          <span className="text-slate-400">Vloerbezetting shift ratio:</span>
           <span className="text-indigo-405 font-bold text-indigo-400">{params.staffPlanningRatio.toFixed(2)}x</span>
         </div>
         <input
@@ -646,7 +646,7 @@ export default function App() {
       {/* Slider 3: Prijsaanpassing */}
       <div className="space-y-1.5">
         <div className="flex justify-between text-[11px] font-mono">
-          <span className="text-slate-400">Landelijke Prijsaanpassing:</span>
+          <span className="text-slate-400">Landelijke prijsaanpassing:</span>
           <span className={`font-bold ${params.priceAdjustment >= 0 ? "text-emerald-400" : "text-rose-455 text-rose-400"}`}>
             {params.priceAdjustment > 0 ? "+" : ""}{params.priceAdjustment}%
           </span>
@@ -679,7 +679,7 @@ export default function App() {
               <ArrowLeftRight className="w-4 h-4 text-emerald-500" />
             </span>
             <div>
-              <p className="text-xs font-semibold text-slate-200">Interne Schoenoverplaatsing</p>
+              <p className="text-xs font-semibold text-slate-200">Interne schoenoverplaatsing</p>
               <p className="text-[10px] text-slate-500">Hevel overtollige maten direct over per bus</p>
             </div>
           </div>
@@ -698,7 +698,7 @@ export default function App() {
 
       {/* Option 5: Weather Scenario Selector */}
       <div className="space-y-1.5 pt-1">
-        <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Weersomstandigheden (Simulatie):</span>
+        <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Weersomstandigheden (simulatie):</span>
         <div className="grid grid-cols-4 gap-2">
           {[
             { id: "normal", label: "Normaal", icon: Sun },
@@ -727,7 +727,7 @@ export default function App() {
 
       {/* Option 6: Dedicated Local Campaign Selector (Amsterdam, Utrecht etc) */}
       <div className="space-y-1">
-        <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Lokale Marketing Campagne:</span>
+        <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Lokale marketing campagne:</span>
         <select
           value={params.activeLocalCampaignStoreId}
           onChange={(e) => {
@@ -737,7 +737,7 @@ export default function App() {
           }}
           className="w-full text-xs bg-[#0a0a0a] border border-white/5 rounded p-2 text-slate-350 focus:outline-none focus:border-white/15 cursor-pointer font-mono"
         >
-          <option value="none">Systeemvrij (Geen extra actieve store campagne)</option>
+          <option value="none">Systeemvrij (geen extra actieve store campagne)</option>
           {currentStores.map(store => (
             <option key={store.id} value={store.id}>
               {store.name} (+35% extra passanten drukte)
@@ -756,7 +756,7 @@ export default function App() {
       {/* Microscope badge */}
       <div className="absolute top-5 right-5 flex items-center gap-1.5 bg-[#050505] px-2.5 py-1 rounded border border-[#ffffff0e]">
         <span className="w-2 h-2 rounded-full bg-emerald-500" />
-        <span className="text-[9px] font-mono tracking-widest text-[#cfcfcf]">DETAIL TWIN MICROSCOOP</span>
+        <span className="text-[9px] font-mono tracking-widest text-[#cfcfcf]">Detail twin microscoop</span>
       </div>
 
       <div>
@@ -775,26 +775,26 @@ export default function App() {
         {/* MENU CHOICE SIDEBAR (User Requested - Avoid small windows) */}
         <div className="lg:col-span-4 flex flex-col gap-2.5">
           <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider block mb-1">
-            Kies Informatiecategorie (Menukeuze):
+            Kies informatiecategorie (menukeuze):
           </span>
           {[
             {
               id: "vloer",
-              title: "Live Winkelvloer",
+              title: "Live winkelvloer",
               desc: "Alarm- & openingstijden, actieve bezetting en etalagedrukte.",
               icon: Activity,
               badge: "Operationeel"
             },
             {
               id: "omzet",
-              title: "Verkoop & Merken",
+              title: "Verkoop & merken",
               desc: "Omzet, brutomarges per merk/productgroep en reviews.",
               icon: DollarSign,
               badge: "Verkoop"
             },
             {
               id: "voorraad",
-              title: "Voorraad & Maten",
+              title: "Voorraad & maten",
               desc: "Voorraadposities, kapitaalbeslag en live maatbreuken.",
               icon: ShoppingBag,
               badge: "Inkoop"
@@ -851,24 +851,24 @@ export default function App() {
               <div className="flex justify-between items-center border-b border-white/5 pb-2">
                 <h4 className="text-xs font-semibold text-white uppercase font-mono tracking-wide flex items-center gap-1.5 font-sans">
                   <Clock className="w-4 h-4 text-emerald-500" />
-                  Live Winkelvloer, Alarm- & Openingstijden
+                  Live winkelvloer, alarm- & openingstijden
                 </h4>
                 <span className="text-[9px] bg-emerald-500/10 text-emerald-400 font-mono px-2 py-0.5 rounded border border-emerald-500/20 animate-pulse">
-                  Sensoren Actief
+                  Sensoren actief
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Alarm opening status */}
                 <div className="bg-[#050505]/70 p-4 rounded border border-white/5 space-y-3">
-                  <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Beveiligingsstatus & Alarm</span>
+                  <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Beveiligingsstatus & alarm</span>
 
                   <div className="flex items-center gap-3">
                     <span className="p-3 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">
                       <StoreIcon className="w-6 h-6 text-emerald-500" />
                     </span>
                     <div>
-                      <p className="text-xs font-bold text-white uppercase">Winkel Status: GEOPEND</p>
+                      <p className="text-xs font-bold text-white uppercase">Winkel status: GEOPEND</p>
                       <p className="text-[10px] text-emerald-400 font-sans">Alarm succesvol uitgeschakeld</p>
                     </div>
                   </div>
@@ -887,14 +887,14 @@ export default function App() {
 
                 {/* Staff check-ins status */}
                 <div className="bg-[#050505]/70 p-4 rounded border border-white/5 space-y-3">
-                  <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">RFID Medewerker Inkloktijden</span>
+                  <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">RFID medewerker inkloktijden</span>
 
                   <div className="flex items-center gap-3">
                     <span className="p-3 bg-indigo-500/10 text-indigo-400 rounded border border-indigo-500/20">
                       <Users className="w-6 h-6 text-indigo-400" />
                     </span>
                     <div>
-                      <p className="text-xs font-bold text-white font-sans">Shift Aanwezigheid</p>
+                      <p className="text-xs font-bold text-white font-sans">Shift aanwezigheid</p>
                       <p className="text-[10px] text-slate-400 font-sans">Geregistreerde check-ins</p>
                     </div>
                   </div>
@@ -912,10 +912,10 @@ export default function App() {
               <div className="bg-[#050505]/70 p-4 rounded border border-white/5 space-y-4 font-sans">
                 <div className="flex justify-between items-center">
                   <div>
-                    <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Klantenbezetting & Etalagedrukte</span>
+                    <span className="text-[10px] text-slate-500 font-mono block uppercase tracking-wider">Klantenbezetting & etalagedrukte</span>
                     <p className="text-xs font-bold text-white mt-0.5 font-sans">Teller analyse van vandaag</p>
                   </div>
-                  <span className="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-mono font-bold animate-pulse">Live Tellers</span>
+                  <span className="text-[9px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded font-mono font-bold animate-pulse">Live tellers</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -941,7 +941,7 @@ export default function App() {
                 {/* Etalageconversie percentage */}
                 <div className="space-y-1.5 pt-1">
                   <div className="flex justify-between text-xs font-mono">
-                    <span className="text-slate-400">Etalage Attractiegraad (Percentage passanten die stoppen):</span>
+                    <span className="text-slate-400">Etalage attractiegraad (percentage passanten die stoppen):</span>
                     <span className="text-emerald-400 font-bold">
                       {Math.round((selectedStore.windowShoppersLooking / (selectedStore.windowShoppersLooking + selectedStore.windowShoppersWalkedBy)) * 100)}%
                     </span>
@@ -966,17 +966,17 @@ export default function App() {
           >
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
               <h4 className="text-xs font-semibold text-white uppercase font-mono tracking-wide">
-                Verkoopcijfers, Marges & Klantenbeoordelingen
+                Verkoopcijfers, marges & klantenbeoordelingen
               </h4>
               <div className="text-[10px] font-mono text-slate-400">
-                NPS Score: <span className="text-emerald-400 font-bold">{selectedStore.nps}</span>
+                NPS score: <span className="text-emerald-400 font-bold">{selectedStore.nps}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Brand margin lists */}
               <div className="space-y-3">
-                <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider block">Marge & Omzet per Merk (maand)</span>
+                <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider block">Marge & omzet per merk (maand)</span>
                 <div className="space-y-2 max-h-[190px] overflow-y-auto pr-1 no-scrollbar">
                   {selectedStore.brands.map((b, i) => (
                     <div key={i} className="bg-[#050505]/40 p-2 text-xs rounded border border-white/5">
@@ -999,7 +999,7 @@ export default function App() {
 
               {/* Product groups breakdown */}
               <div className="space-y-3">
-                <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider block">Marge per Productgroep</span>
+                <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider block">Marge per productgroep</span>
                 <div className="space-y-3.5">
                   {selectedStore.productGroups.map((pg, i) => (
                     <div key={i} className="space-y-1">
@@ -1023,13 +1023,13 @@ export default function App() {
             <div className="pt-2.5 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Customer segment bar graph */}
               <div className="bg-[#050505]/20 p-3 rounded border border-white/5 space-y-2">
-                <span className="text-[10px] text-slate-500 font-mono block uppercase">Consumenten Segmentering</span>
+                <span className="text-[10px] text-slate-500 font-mono block uppercase">Consumenten segmentering</span>
                 <div className="space-y-2 text-[10px]">
                   {[
-                    { name: "Sneakerheads / Sportief", ratio: 45, color: "bg-emerald-500" },
-                    { name: "Comfort / Medisch", ratio: 25, color: "bg-blue-500" },
-                    { name: "Luxe & Zakelijk heren", ratio: 18, color: "bg-indigo-500" },
-                    { name: "Kinderen & Gezinnen", ratio: 12, color: "bg-amber-500" }
+                    { name: "Sneakerheads / sportief", ratio: 45, color: "bg-emerald-500" },
+                    { name: "Comfort / medisch", ratio: 25, color: "bg-blue-500" },
+                    { name: "Luxe & zakelijk heren", ratio: 18, color: "bg-indigo-500" },
+                    { name: "Kinderen & gezinnen", ratio: 12, color: "bg-amber-500" }
                   ].map((seg, i) => (
                     <div key={i} className="space-y-1">
                       <div className="flex justify-between text-[10px] font-mono">
@@ -1046,7 +1046,7 @@ export default function App() {
 
               {/* Review details */}
               <div className="space-y-2">
-                <span className="text-[10px] text-slate-500 font-mono block uppercase">Recente Google Beoordelingen</span>
+                <span className="text-[10px] text-slate-500 font-mono block uppercase">Recente Google beoordelingen</span>
                 <div className="space-y-2 max-h-[140px] overflow-y-auto no-scrollbar">
                   {selectedStore.reviews.slice(0, 2).map((rev, i) => (
                     <div key={i} className="bg-[#050505]/70 p-2.5 rounded border border-white/5 text-[11px] text-[#eaeaea]">
@@ -1072,7 +1072,7 @@ export default function App() {
           >
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
               <h4 className="text-xs font-semibold text-white uppercase font-mono tracking-wide">
-                Voorraadhoogtes, Planken & Maatbehoefte
+                Voorraadhoogtes, planken & maatbehoefte
               </h4>
               <div className="text-[10px] font-mono text-rose-450 flex items-center gap-1.5">
                 Kritieke maatbreuken: <span className="font-bold">{selectedStore.sizeBreaksCount} maten</span>
@@ -1091,12 +1091,12 @@ export default function App() {
                 <p className="text-[9px] text-zinc-650 font-mono mt-0.5">Financiële waarde</p>
               </div>
               <div className="bg-[#050505]/70 p-3 border border-white/5 rounded">
-                <span className="text-[9px] text-zinc-500 font-mono block uppercase">Sell-Through Rate</span>
+                <span className="text-[9px] text-zinc-500 font-mono block uppercase">Sell-through rate</span>
                 <p className="text-sm font-semibold text-white mt-1">{selectedStore.sellThroughRate}%</p>
                 <p className="text-[9px] text-rose-400 mt-0.5 font-mono">Dood: {selectedStore.deadStockPercent}%</p>
               </div>
               <div className="bg-[#050505]/70 p-3 border border-white/5 rounded">
-                <span className="text-[9px] text-zinc-500 font-mono block uppercase">Gemiste Omzet</span>
+                <span className="text-[9px] text-zinc-500 font-mono block uppercase">Gemiste omzet</span>
                 <p className={`text-sm font-semibold mt-1 ${selectedStore.neeVerkoopCount > 100 ? "text-rose-450" : "text-emerald-400"}`}>
                   €{(selectedStore.neeVerkoopCount * 110).toLocaleString("nl-NL")}
                 </p>
@@ -1107,7 +1107,7 @@ export default function App() {
             {/* Size shelf map */}
             <div className="bg-[#050505]/40 p-4 rounded border border-white/5 space-y-3">
               <div>
-                <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider block">Maatspecifieke Plankniveau's</span>
+                <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider block">Maatspecifieke plankniveau's</span>
                 <p className="text-[11px] text-[#bfbfbf] mt-0.5">Live inventarisatie en behoeftemapping per schoenmaat (36 - 46):</p>
               </div>
               <div className="grid grid-cols-6 sm:grid-cols-11 gap-1.5 pt-1">
@@ -1148,7 +1148,7 @@ export default function App() {
                 })}
               </div>
               <div className="flex justify-between items-center bg-[#050505] p-2 rounded text-[9px] text-[#8f8f8f] font-mono border border-white/5">
-                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-rose-500 animate-pulse" /> Maatbreuk (Lege plank)</span>
+                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-rose-500 animate-pulse" /> Maatbreuk (lege plank)</span>
                 <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-emerald-500" /> Voldoende voorraad</span>
                 <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-amber-500" /> Overstock</span>
               </div>
@@ -1165,7 +1165,7 @@ export default function App() {
           >
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
               <h4 className="text-xs font-semibold text-white uppercase font-mono tracking-wide flex items-center gap-1">
-                EBITDA, Huur, Personeel & Omnichannel Resultaten
+                EBITDA, huur, personeel & omnichannel resultaten
               </h4>
               <span className={`text-[9px] px-2.5 py-0.5 rounded font-mono font-bold ${
                 selectedStore.status === "GREEN" ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20" : "bg-amber-500/15 text-amber-400 border border-[#f59e0b3c]"
@@ -1177,11 +1177,11 @@ export default function App() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Left Block EBITDA */}
               <div className="bg-[#050505]/75 p-4 rounded border border-white/5 space-y-3">
-                <span className="text-[10px] text-zinc-500 font-mono block uppercase tracking-wider">Break-even & EBITDA Analyse (per maand)</span>
+                <span className="text-[10px] text-zinc-500 font-mono block uppercase tracking-wider">Break-even & EBITDA analyse (per maand)</span>
 
                 <div className="space-y-1.5 font-mono text-[11px]">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Filiaal Omzet:</span>
+                    <span className="text-slate-500">Filiaal omzet:</span>
                     <span className="text-zinc-200 font-bold">€{selectedStore.revenue.toLocaleString("nl-NL")}</span>
                   </div>
                   <div className="flex justify-between">
@@ -1200,7 +1200,7 @@ export default function App() {
 
                 <div className="pt-2 border-t border-white/5 font-mono text-[10px]">
                   <div className="flex justify-between">
-                    <span className="text-zinc-400">Break-even Drempel:</span>
+                    <span className="text-zinc-400">Break-even drempel:</span>
                     <span className="text-white font-bold">€{selectedStore.breakEvenThreshold.toLocaleString("nl-NL")}</span>
                   </div>
                   <div className="w-full bg-white/5 h-1.5 rounded overflow-hidden mt-1.5">
@@ -1214,7 +1214,7 @@ export default function App() {
 
               {/* Right Block Omnichannel */}
               <div className="bg-[#050505]/75 p-4 rounded border border-white/5 space-y-3 shrink-0">
-                <span className="text-[10px] text-zinc-500 font-mono block uppercase tracking-wider">Webshop & Omnichannel Conversie</span>
+                <span className="text-[10px] text-zinc-500 font-mono block uppercase tracking-wider">Webshop & omnichannel conversie</span>
 
                 <div className="space-y-2 font-mono text-[11px]">
                   <div className="flex justify-between">
@@ -1222,11 +1222,11 @@ export default function App() {
                     <span className="text-zinc-200 font-bold">{selectedStore.onlineOrdersFulfilled} pak.</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Click & Collect:</span>
+                    <span className="text-slate-500">Click & collect:</span>
                     <span className="text-zinc-300">{selectedStore.clickAndCollectVolume} orders</span>
                   </div>
                   <div className="flex justify-between border-t border-white/5 pt-1.5 text-zinc-100">
-                    <span>Landelijke Zoekfouten:</span>
+                    <span>Landelijke zoekfouten:</span>
                     <span className={`font-semibold ${selectedStore.mismatchSearchHits > 100 ? "text-amber-400" : "text-emerald-400"}`}>
                       {selectedStore.mismatchSearchHits} searches
                     </span>
@@ -1242,7 +1242,7 @@ export default function App() {
             {/* Bottom staffing shift row */}
             <div className="bg-[#050505]/50 p-4 rounded border border-white/5 space-y-2.5">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-neutral-300">Medewerker Shift-Bezetting & Productiviteit</span>
+                <span className="font-bold text-neutral-300">Medewerker shift-bezetting & productiviteit</span>
                 <span className="text-[11px] text-zinc-400 font-mono">{selectedStore.staffHours} uur gewerkt</span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center text-[10px] font-mono">
@@ -1297,7 +1297,7 @@ export default function App() {
         <div>
           <h2 className="text-sm font-semibold text-white tracking-wide flex items-center gap-2 font-sans">
             <Sparkles className="w-4 h-4 text-emerald-500 animate-pulse" />
-            Sole-Twin Strategische AI Adviseur Core
+            Sole-Twin strategische AI-adviseur core
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
             Interactieve feedback gegenereerd op basis van uw herrekende digital twin data.
@@ -1317,7 +1317,7 @@ export default function App() {
           ) : (
             <>
               <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              Vraag AI Advies (Instant)
+              Vraag AI-advies (instant)
             </>
           )}
         </button>
@@ -1327,7 +1327,7 @@ export default function App() {
         {isAnalyzing ? (
           <div className="space-y-3 py-6 text-center text-slate-500">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto text-emerald-500" />
-            <p className="animate-pulse">Gemini 3.5-Engine herrekent scenario variabelen & marge prognose...</p>
+            <p className="animate-pulse">Gemini 3.5-engine herrekent scenario variabelen & marge prognose...</p>
           </div>
         ) : adviceText ? (
           <div className="text-slate-300 workspace-advisor-docs">
@@ -1339,7 +1339,7 @@ export default function App() {
                 if (bullets.length > 0) {
                   const items = bullets;
                   out.push(
-                    <ul key={`ul-${key++}`} className="list-disc pl-5 space-y-1 my-1">
+                    <ul key={`ul-${key++}`} className={`list-disc pl-5 space-y-1 mb-2 ${out.length === 0 ? "mt-0" : "mt-2"}`}>
                       {items.map((b, i) => (
                         <li key={i} className="leading-relaxed">{renderInline(b)}</li>
                       ))}
@@ -1351,17 +1351,17 @@ export default function App() {
               adviceText.split("\n").forEach((line) => {
                 if (line.startsWith("### ")) {
                   flushBullets();
-                  out.push(<h3 key={`h3-${key++}`} className="text-sm font-semibold text-emerald-400 mt-3 mb-1">{renderInline(line.slice(4))}</h3>);
+                  out.push(<h3 key={`h3-${key++}`} className={`text-sm font-semibold text-emerald-400 mb-1 ${out.length === 0 ? "mt-0" : "mt-4"}`}>{renderInline(line.slice(4))}</h3>);
                 } else if (line.startsWith("#### ")) {
                   flushBullets();
-                  out.push(<h4 key={`h4-${key++}`} className="text-xs font-semibold text-white border-b border-white/10 pb-1 mt-3 mb-1">{renderInline(line.slice(5))}</h4>);
+                  out.push(<h4 key={`h4-${key++}`} className={`text-xs font-semibold text-white mb-1 ${out.length === 0 ? "mt-0" : "mt-4"}`}>{renderInline(line.slice(5))}</h4>);
                 } else if (line.startsWith("- ") || line.startsWith("* ")) {
                   bullets.push(line.slice(2));
                 } else if (line.trim() === "") {
                   flushBullets();
                 } else {
                   flushBullets();
-                  out.push(<p key={`p-${key++}`} className="leading-relaxed my-1.5">{renderInline(line)}</p>);
+                  out.push(<p key={`p-${key++}`} className={`leading-relaxed mb-2 ${out.length === 0 ? "mt-0" : "mt-2"}`}>{renderInline(line)}</p>);
                 }
               });
               flushBullets();
@@ -1383,7 +1383,7 @@ export default function App() {
       <div className="flex justify-between items-center pb-2 border-b border-white/5">
         <h3 className="text-[10px] font-bold text-slate-400 tracking-wider font-mono uppercase flex items-center gap-1.5">
           <Database className="w-3.5 h-3.5 text-emerald-500" />
-          Koppelingen & Live Databronnen
+          Koppelingen & live databronnen
         </h3>
         <span className="text-[10px] text-emerald-400 font-mono font-bold">OK</span>
       </div>
