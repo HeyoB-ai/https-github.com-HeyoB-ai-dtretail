@@ -1362,7 +1362,7 @@ export default function App() {
             {/* Bottom staffing shift row */}
             <div className="bg-[#050505]/50 p-4 rounded border border-white/5 space-y-2.5">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-neutral-300">Medewerker shift-bezetting & productiviteit</span>
+                <span className="font-bold text-neutral-300">Medewerker shift-bezetting & productiviteit <span className="font-normal text-slate-500">(kernteam — greep uit het team)</span></span>
                 <span className="text-[11px] text-zinc-400 font-mono">{selectedStore.staffHours} uur gewerkt</span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center text-[10px] font-mono">

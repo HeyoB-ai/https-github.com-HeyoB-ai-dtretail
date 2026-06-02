@@ -536,7 +536,7 @@ export function runSimulation(stores: Store[], params: SimulationParams): Store[
     const grossMargin = Math.round((revenue * grossMarginPercent) / 100);
     
     // 5. Staffing costs
-    const staffCost = Math.round(store.staffCost * staffPlanning);
+    const staffCost = Math.round(revenue * 0.15 * staffPlanning);
     const staffHours = Math.round(store.staffHours * staffPlanning);
     
     const revPerStaffHour = staffHours > 0 ? Math.round(revenue / staffHours) : 0;
@@ -544,6 +544,7 @@ export function runSimulation(stores: Store[], params: SimulationParams): Store[
     
     // Rent costs
     const rentCost = store.squareMeters * store.rentPerSqm;
+    const otherCost = Math.round(revenue * 0.07);
     
     // Webshop overlap
     // If transfers or campaigns are active, local C&C or region online matches improve
@@ -555,7 +556,7 @@ export function runSimulation(stores: Store[], params: SimulationParams): Store[
     const mismatchSearchHits = params.runInterStoreTransfers ? Math.round(store.mismatchSearchHits * 0.2) : store.mismatchSearchHits;
     
     // EBITDA
-    const ebitda = grossMargin - rentCost - staffCost - store.otherCosts;
+    const ebitda = grossMargin - rentCost - staffCost - otherCost;
     
     // Sell-through rate & inventory behavior
     const baseSTRBoost = params.globalDiscountBoost * 0.6 + (params.priceAdjustment < 0 ? Math.abs(params.priceAdjustment) * 0.4 : -params.priceAdjustment * 0.5);
@@ -645,6 +646,7 @@ export function runSimulation(stores: Store[], params: SimulationParams): Store[
       onlineOrdersFulfilled,
       mismatchSearchHits,
       ebitda,
+      otherCost,
       sellThroughRate,
       deadStockPercent,
       sizeBreaksCount,
