@@ -87,6 +87,22 @@ const storeActivity = (date) => {
   return 0.35 + 0.65 * Math.sin(Math.PI * x); // busier around midday
 };
 
+const weatherInfo = (code) => {
+  if (code === 0) return { label: "Helder", icon: "☀️" };
+  if (code <= 3) return { label: "Bewolkt", icon: "⛅" };
+  if (code <= 48) return { label: "Mist", icon: "🌫️" };
+  if (code <= 67) return { label: "Regen", icon: "🌧️" };
+  if (code <= 77) return { label: "Sneeuw", icon: "❄️" };
+  if (code <= 82) return { label: "Buien", icon: "🌦️" };
+  return { label: "Onweer", icon: "⛈️" };
+};
+const weatherRevenueFactor = (tmax, precipProb) => {
+  let f = 1;
+  if (tmax >= 12 && tmax <= 22) f += 0.05; else if (tmax < 5 || tmax > 28) f -= 0.05;
+  f -= 0.12 * ((precipProb || 0) / 100);
+  return Math.max(0.82, Math.min(1.15, f));
+};
+
 export default function App() {
   // 1. Core States
   const baseStores = useMemo(() => getInitialStoresData(), []);
@@ -148,6 +164,16 @@ export default function App() {
   const chainToday = todayByStore.reduce((a, s) => a + s.today, 0);
   const chainTarget = todayByStore.reduce((a, s) => a + s.target, 0);
   const chainPct = chainTarget > 0 ? Math.round((chainToday / chainTarget) * 100) : 0;
+
+  // Live weerdata (Open-Meteo, keyless/CORS) voor de weer-omzetvoorspelling
+  const [weather, setWeather] = useState(null);
+  const [weatherErr, setWeatherErr] = useState(false);
+  useEffect(() => {
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=52.09&longitude=5.12&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,precipitation_probability_max&timezone=Europe%2FAmsterdam&forecast_days=4")
+      .then(r => r.json())
+      .then(d => setWeather(d))
+      .catch(() => setWeatherErr(true));
+  }, []);
 
   // Derive warnings and alerts based on current simulation outcome
   const currentAlerts = useMemo(() => {
@@ -1549,6 +1575,46 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                  <div className="bg-[#0f0f0f] border border-white/5 rounded p-5">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4 gap-4">
+                      <div>
+                        <h3 className="text-xs uppercase tracking-widest text-slate-400 font-semibold flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />Weer & omzetvoorspelling</h3>
+                        <p className="text-[10px] text-slate-500 font-mono mt-1">Live weerdata (Open-Meteo) · voorspelde dagomzet incl. btw</p>
+                      </div>
+                      {weather && weather.current && (
+                        <div className="text-right shrink-0">
+                          <div className="text-xl font-mono text-white tabular-nums leading-none">{Math.round(weather.current.temperature_2m)}°C</div>
+                          <div className="text-[10px] text-slate-500 font-mono mt-1">{weatherInfo(weather.current.weather_code).icon} nu</div>
+                        </div>
+                      )}
+                    </div>
+                    {weatherErr ? (
+                      <p className="text-[11px] text-slate-500 font-mono">Weerdata momenteel niet beschikbaar.</p>
+                    ) : !weather ? (
+                      <p className="text-[11px] text-slate-500 font-mono">Weerdata laden…</p>
+                    ) : (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {weather.daily.time.map((t, i) => {
+                          const info = weatherInfo(weather.daily.weather_code[i]);
+                          const tmax = Math.round(weather.daily.temperature_2m_max[i]);
+                          const pp = weather.daily.precipitation_probability_max[i] ?? 0;
+                          const f = weatherRevenueFactor(tmax, pp);
+                          const predicted = Math.round(chainTarget * f);
+                          return (
+                            <div key={t} className="bg-[#0a0a0a]/50 border border-white/5 rounded p-3">
+                              <div className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">{new Date(t).toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" })}</div>
+                              <div className="text-2xl mt-1">{info.icon}</div>
+                              <div className="text-xs text-slate-300 font-mono mt-0.5">{tmax}°C · {pp}% regen</div>
+                              <div className="mt-2 pt-2 border-t border-white/5">
+                                <div className="text-sm font-mono text-emerald-400 tabular-nums">€{predicted.toLocaleString("nl-NL")}</div>
+                                <div className="text-[9px] text-slate-500 font-mono">verwacht ({f >= 1 ? "+" : ""}{Math.round((f - 1) * 100)}%)</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-6">
