@@ -379,7 +379,7 @@ export default function App() {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
 
       <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
-        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">OMZET KETEN / MND</span>
+        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">OMZET KETEN · 30 DGN</span>
         <div className="mt-3 flex items-baseline gap-1.5">
           <span className="text-lg md:text-xl font-light font-mono text-white tracking-tight">
             €{totalChainMetrics.revenue.toLocaleString("nl-NL")}
@@ -433,7 +433,7 @@ export default function App() {
       </div>
 
       <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
-        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">EBITDA BIJDRAGE / MND</span>
+        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">EBITDA · 30 DGN</span>
         <div className="mt-3 flex items-baseline gap-1.5">
           <span className={`text-lg md:text-xl font-medium font-mono tracking-tight ${totalChainMetrics.ebitda >= 200000 ? "text-emerald-400" : "text-white"}`}>
             €{totalChainMetrics.ebitda.toLocaleString("nl-NL")}
