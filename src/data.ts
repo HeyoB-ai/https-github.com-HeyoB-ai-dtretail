@@ -110,8 +110,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 8,
       returnRate: 9,
       
-      totalStockPairs: 938,
-      totalStockValue: 51590,
+      totalStockPairs: 4331,
+      totalStockValue: 346480,
       sellThroughRate: 58,
       inventoryTurnover: 4.8,
       deadStockPercent: 12,
@@ -143,7 +143,19 @@ export function getInitialStoresData(): Store[] {
       
       brands: getBaseBrands(),
       productGroups: getBaseProductGroups(),
-      sizes: getBaseSizes(),
+      sizes: [
+        { size: 36, stock: 208, demandForecast: 185 },
+        { size: 37, stock: 369, demandForecast: 346 },
+        { size: 38, stock: 554, demandForecast: 600 },
+        { size: 39, stock: 669, demandForecast: 692 },
+        { size: 40, stock: 739, demandForecast: 785 },
+        { size: 41, stock: 508, demandForecast: 554 },
+        { size: 42, stock: 162, demandForecast: 692 }, // size-break! high demand, low stock
+        { size: 43, stock: 439, demandForecast: 415 },
+        { size: 44, stock: 323, demandForecast: 346 },
+        { size: 45, stock: 185, demandForecast: 208 },
+        { size: 46, stock: 175, demandForecast: 92 }, // overstock of unpopular size
+      ],
       reviews: getBaseReviews("Utrecht"),
       staff: getBaseStaff()
     },
@@ -169,8 +181,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 12,
       returnRate: 14,
       
-      totalStockPairs: 1876,
-      totalStockValue: 103180,
+      totalStockPairs: 10399,
+      totalStockValue: 831920,
       sellThroughRate: 64,
       inventoryTurnover: 5.2,
       deadStockPercent: 15,
@@ -202,7 +214,19 @@ export function getInitialStoresData(): Store[] {
       
       brands: getBaseBrands().map(b => ({ ...b, sales: b.sales * 2 })),
       productGroups: getBaseProductGroups().map(pg => ({ ...pg, sales: pg.sales * 2.2, unitsSold: Math.round(pg.unitsSold * 2.2) })),
-      sizes: getBaseSizes().map(s => ({ ...s, stock: s.stock * 2, demandForecast: s.demandForecast * 2.2 })),
+      sizes: [
+        { size: 36, stock: 499, demandForecast: 488 },
+        { size: 37, stock: 887, demandForecast: 915 },
+        { size: 38, stock: 1330, demandForecast: 1586 },
+        { size: 39, stock: 1608, demandForecast: 1829 },
+        { size: 40, stock: 1774, demandForecast: 2073 },
+        { size: 41, stock: 1220, demandForecast: 1464 },
+        { size: 42, stock: 388, demandForecast: 1829 }, // size-break! high demand, low stock
+        { size: 43, stock: 1053, demandForecast: 1098 },
+        { size: 44, stock: 776, demandForecast: 915 },
+        { size: 45, stock: 443, demandForecast: 549 },
+        { size: 46, stock: 421, demandForecast: 244 }, // overstock of unpopular size
+      ],
       reviews: getBaseReviews("Amsterdam"),
       staff: getBaseStaff().map(st => ({ ...st, hoursWorked: st.hoursWorked * 1.5, laborCost: st.laborCost * 1.5 }))
     },
@@ -228,8 +252,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 18,
       returnRate: 16,
       
-      totalStockPairs: 1501,
-      totalStockValue: 82555,
+      totalStockPairs: 7950,
+      totalStockValue: 636000,
       sellThroughRate: 52,
       inventoryTurnover: 3.9,
       deadStockPercent: 24, // High deadstock
@@ -261,7 +285,19 @@ export function getInitialStoresData(): Store[] {
       
       brands: getBaseBrands().map(b => ({ ...b, sales: b.sales * 1.5, margin: b.margin - 5 })),
       productGroups: getBaseProductGroups().map(pg => ({ ...pg, sales: pg.sales * 1.6, unitsSold: Math.round(pg.unitsSold * 1.6) })),
-      sizes: getBaseSizes().map(s => ({ ...s, stock: Math.round(s.stock * 1.6), demandForecast: Math.round(s.demandForecast * 1.8) })),
+      sizes: [
+        { size: 36, stock: 381, demandForecast: 381 },
+        { size: 37, stock: 678, demandForecast: 715 },
+        { size: 38, stock: 1017, demandForecast: 1239 },
+        { size: 39, stock: 1229, demandForecast: 1430 },
+        { size: 40, stock: 1356, demandForecast: 1621 },
+        { size: 41, stock: 932, demandForecast: 1144 },
+        { size: 42, stock: 297, demandForecast: 1430 }, // size-break! high demand, low stock
+        { size: 43, stock: 805, demandForecast: 858 },
+        { size: 44, stock: 593, demandForecast: 715 },
+        { size: 45, stock: 339, demandForecast: 429 },
+        { size: 46, stock: 323, demandForecast: 191 }, // overstock of unpopular size
+      ],
       reviews: getBaseReviews("Rotterdam"),
       staff: getBaseStaff().map(st => ({ ...st, hoursWorked: st.hoursWorked * 1.2, laborCost: st.laborCost * 1.2 }))
     },
@@ -287,8 +323,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 6,
       returnRate: 7,
       
-      totalStockPairs: 750,
-      totalStockValue: 41250,
+      totalStockPairs: 3040,
+      totalStockValue: 243200,
       sellThroughRate: 61,
       inventoryTurnover: 4.9,
       deadStockPercent: 8,
@@ -320,7 +356,19 @@ export function getInitialStoresData(): Store[] {
       
       brands: getBaseBrands().map(b => ({ ...b, sales: b.sales * 0.8, margin: b.margin + 2 })),
       productGroups: getBaseProductGroups().map(pg => ({ ...pg, sales: pg.sales * 0.8, unitsSold: Math.round(pg.unitsSold * 0.8), returns: pg.returns - 2 })),
-      sizes: getBaseSizes().map(s => ({ ...s, stock: Math.round(s.stock * 0.8), demandForecast: Math.round(s.demandForecast * 0.85) })),
+      sizes: [
+        { size: 36, stock: 146, demandForecast: 138 },
+        { size: 37, stock: 259, demandForecast: 259 },
+        { size: 38, stock: 389, demandForecast: 450 },
+        { size: 39, stock: 470, demandForecast: 519 },
+        { size: 40, stock: 519, demandForecast: 588 },
+        { size: 41, stock: 357, demandForecast: 413 },
+        { size: 42, stock: 113, demandForecast: 519 }, // size-break! high demand, low stock
+        { size: 43, stock: 308, demandForecast: 312 },
+        { size: 44, stock: 227, demandForecast: 259 },
+        { size: 45, stock: 130, demandForecast: 154 },
+        { size: 46, stock: 122, demandForecast: 69 }, // overstock of unpopular size
+      ],
       reviews: getBaseReviews("Amersfoort"),
       staff: getBaseStaff().map(st => ({ ...st, hoursWorked: Math.round(st.hoursWorked * 0.9), laborCost: Math.round(st.laborCost * 0.9) }))
     },
@@ -346,8 +394,8 @@ export function getInitialStoresData(): Store[] {
       discountUsedPrct: 10,
       returnRate: 10,
       
-      totalStockPairs: 1034,
-      totalStockValue: 56870,
+      totalStockPairs: 4760,
+      totalStockValue: 380800,
       sellThroughRate: 54,
       inventoryTurnover: 4.1,
       deadStockPercent: 18,
@@ -379,7 +427,19 @@ export function getInitialStoresData(): Store[] {
       
       brands: getBaseBrands().map(b => ({ ...b, sales: b.sales * 1.1 })),
       productGroups: getBaseProductGroups().map(pg => ({ ...pg, sales: pg.sales * 1.1, unitsSold: Math.round(pg.unitsSold * 1.1) })),
-      sizes: getBaseSizes().map(s => ({ ...s, stock: Math.round(s.stock * 1.1), demandForecast: Math.round(s.demandForecast * 1.1) })),
+      sizes: [
+        { size: 36, stock: 230, demandForecast: 203 },
+        { size: 37, stock: 405, demandForecast: 382 },
+        { size: 38, stock: 608, demandForecast: 658 },
+        { size: 39, stock: 737, demandForecast: 760 },
+        { size: 40, stock: 810, demandForecast: 861 },
+        { size: 41, stock: 557, demandForecast: 608 },
+        { size: 42, stock: 180, demandForecast: 760 }, // size-break! high demand, low stock
+        { size: 43, stock: 483, demandForecast: 456 },
+        { size: 44, stock: 354, demandForecast: 382 },
+        { size: 45, stock: 203, demandForecast: 230 },
+        { size: 46, stock: 193, demandForecast: 101 }, // overstock of unpopular size
+      ],
       reviews: getBaseReviews("Den Haag"),
       staff: getBaseStaff().map(st => ({ ...st, hoursWorked: st.hoursWorked * 1.05, laborCost: st.laborCost * 1.1 }))
     }

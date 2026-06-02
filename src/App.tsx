@@ -255,7 +255,7 @@ export default function App() {
     const averageMarginPercent = Math.round((grossMargin / revenue) * 100);
 
     const revenueDelta = ((revenue - baseRevenue) / baseRevenue) * 100;
-    const avgGmroi = parseFloat((grossMargin / costOfStock).toFixed(2)) * 10; // amplified index
+    const avgGmroi = costOfStock > 0 ? (grossMargin * 12) / costOfStock : 0; // annualized GMROI (monthly margin * 12)
 
     // Rent analysis
     const totalArea = currentStores.reduce((sum, s) => sum + s.squareMeters, 0);
@@ -417,7 +417,7 @@ export default function App() {
         <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">GMROI INDEX</span>
         <div className="mt-3 flex items-baseline justify-between">
           <span className="text-lg md:text-xl font-light font-mono text-emerald-400 tracking-tight">
-            {totalChainMetrics.avgGmroi}
+            {totalChainMetrics.avgGmroi.toFixed(1)}x
           </span>
           <span className="text-[9px] text-slate-500 font-mono text-right leading-tight">
             Marge / € voorraad<br />Doel ≥ 2,0
@@ -426,7 +426,7 @@ export default function App() {
         <div className="w-full bg-white/5 h-1 mt-3 overflow-hidden">
           <div
             className="h-full bg-emerald-500 transition-all duration-500"
-            style={{ width: `${Math.min(100, (totalChainMetrics.avgGmroi / 30) * 100)}%` }}
+            style={{ width: `${Math.min(100, (totalChainMetrics.avgGmroi / 4) * 100)}%` }}
           />
         </div>
       </div>
@@ -1076,7 +1076,7 @@ export default function App() {
                       </div>
                       <div className="flex justify-between text-[9px] text-[#8f8f8f] mt-1 font-mono">
                         <span>Marge: {b.margin}%</span>
-                        <span>GMROI Index: {(b.gmroi / 10).toFixed(1)}x</span>
+                        <span>GMROI Index: {b.gmroi.toFixed(1)}x</span>
                       </div>
                       {/* Visual bar */}
                       <div className="w-full bg-white/5 h-1 mt-1.5 overflow-hidden">
@@ -1202,8 +1202,8 @@ export default function App() {
               </div>
               <div className="grid grid-cols-6 sm:grid-cols-11 gap-1.5 pt-1">
                 {selectedStore.sizes.map((s, i) => {
-                  const isSizeBreak = s.size === 42 && s.stock < 50;
-                  const isOverstock = s.size === 46 && s.stock > 30;
+                  const isSizeBreak = s.stock < s.demandForecast * 0.4;
+                  const isOverstock = s.stock > s.demandForecast * 1.6;
                   return (
                     <div
                       key={i}
