@@ -307,6 +307,9 @@ export default function App() {
     };
   }, [currentStores, baseStores]);
 
+  // Voortschrijdend 30-dagentotaal (ex btw): vandaag telt mee als de live, gedeeltelijke handelsdag (/26-basis, net als de thermometer)
+  const rolling30Revenue = Math.round(totalChainMetrics.revenue - (totalChainMetrics.revenue / 26) * (1 - _dayFrac));
+
   // Recalculate anytime weather or critical params change
   const handleScenarioPreset = (preset: "rainy_weekend" | "sale_clearance" | "optimized_staff" | "normal") => {
     if (preset === "rainy_weekend") {
@@ -379,10 +382,10 @@ export default function App() {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
 
       <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
-        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">OMZET KETEN · 30 DGN</span>
+        <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">OMZET KETEN · 30 DGN · EX BTW</span>
         <div className="mt-3 flex items-baseline gap-1.5">
           <span className="text-lg md:text-xl font-light font-mono text-white tracking-tight">
-            €{totalChainMetrics.revenue.toLocaleString("nl-NL")}
+            €{rolling30Revenue.toLocaleString("nl-NL")}
           </span>
           <span className={`text-[10px] font-mono flex items-center ${totalChainMetrics.revenueDelta >= 0 ? "text-emerald-400" : "text-rose-450"}`}>
             {totalChainMetrics.revenueDelta >= 0 ? "▲" : "▼"}{Math.abs(totalChainMetrics.revenueDelta).toFixed(1)}%
