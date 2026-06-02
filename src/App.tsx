@@ -141,6 +141,14 @@ export default function App() {
     });
   }, [currentStores, tick, now]);
 
+  // Live dagomzet (incl. btw) per filiaal en keten-totaal voor de thermometer
+  const _hNow = now.getHours() + now.getMinutes() / 60;
+  const _dayFrac = _hNow <= 9 ? 0 : _hNow >= 18 ? 1 : (_hNow - 9) / 9;
+  const todayByStore = currentStores.map(s => { const target = Math.round((s.revenue / 26) * 1.21); return { city: s.city, today: Math.round(target * _dayFrac), target }; });
+  const chainToday = todayByStore.reduce((a, s) => a + s.today, 0);
+  const chainTarget = todayByStore.reduce((a, s) => a + s.target, 0);
+  const chainPct = chainTarget > 0 ? Math.round((chainToday / chainTarget) * 100) : 0;
+
   // Derive warnings and alerts based on current simulation outcome
   const currentAlerts = useMemo(() => {
     return getLiveAlerts(currentStores);
@@ -475,9 +483,6 @@ export default function App() {
         {currentStores.map((store) => {
           const isSelected = store.id === selectedStoreId;
           const rentMarginRatio = (store.rentPerSqm * store.squareMeters) / store.revenue;
-          const _h = now.getHours() + now.getMinutes() / 60;
-          const dayFrac = _h <= 9 ? 0 : _h >= 18 ? 1 : (_h - 9) / 9;            // share of the 09:00-18:00 day elapsed
-          const todayRevenue = Math.round((store.revenue / 26) * 1.21 * dayFrac); // monthly ex VAT -> daily, incl. 21% VAT, grown so far
 
           return (
             <div
@@ -527,10 +532,6 @@ export default function App() {
                   <span className={store.sizeBreaksCount > 20 ? "text-rose-400" : "text-slate-400"}>
                     {store.sizeBreaksCount}
                   </span>
-                </div>
-                <div className="flex justify-between text-[10px] font-mono mt-1 pt-1 border-t border-white/5">
-                  <span className="text-slate-500">Vandaag:</span>
-                  <span className="text-emerald-400 font-bold tabular-nums">€{todayRevenue.toLocaleString("nl-NL")}</span>
                 </div>
               </div>
 
@@ -1526,6 +1527,29 @@ export default function App() {
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <div className="xl:col-span-2 space-y-6">
                   {storeGrid}
+                  <div className="bg-[#0f0f0f] border border-white/5 rounded p-5">
+                    <div className="flex items-end justify-between border-b border-white/5 pb-3 mb-4 gap-4">
+                      <div>
+                        <h3 className="text-xs uppercase tracking-widest text-slate-400 font-semibold flex items-center gap-1.5"><span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />Omzet vandaag — live thermometer</h3>
+                        <p className="text-[10px] text-slate-500 font-mono mt-1">Realtime dagomzet incl. btw · {isOpenNow ? "winkels geopend" : "winkels gesloten"}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="text-2xl md:text-3xl font-light font-mono text-emerald-400 tabular-nums leading-none">€{chainToday.toLocaleString("nl-NL")}</div>
+                        <div className="text-[10px] text-slate-500 font-mono mt-1">keten totaal · {chainPct}% van verwachte dagomzet</div>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                      {todayByStore.map(s => (
+                        <div key={s.city} className="bg-[#0a0a0a]/50 border border-white/5 rounded p-3">
+                          <div className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">{s.city}</div>
+                          <div className="text-lg font-mono text-white tabular-nums mt-1">€{s.today.toLocaleString("nl-NL")}</div>
+                          <div className="w-full bg-white/5 h-1.5 mt-2 rounded overflow-hidden">
+                            <div className="h-full bg-emerald-500 transition-all duration-700" style={{ width: (s.target > 0 ? Math.min(100, (s.today / s.target) * 100) : 0) + "%" }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <div className="space-y-6">
                   {alertsPanel}
