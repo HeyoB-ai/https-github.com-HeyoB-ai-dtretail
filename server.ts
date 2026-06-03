@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -11,24 +10,7 @@ const PORT = 3000;
 
 app.use(express.json());
 
-// Initialize Gemini SDK with telemetry header
-const getGeminiClient = () => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === "MY_GEMINI_API_KEY") {
-    console.warn("GEMINI_API_KEY key is missing. Falling back to local heuristic advisor.");
-    return null;
-  }
-  return new GoogleGenAI({
-    apiKey: apiKey,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
-      },
-    },
-  });
-};
-
-// Heuristic fallback advice in Dutch if Gemini Key is not available or fails
+// Heuristic fallback advice in Dutch if the Claude (Anthropic) key is not available or fails
 const generateHeuristicAdvice = (storesData: any[], params: any) => {
   const lowMarginStores = storesData.filter((s: any) => s.grossMarginPercent < 40).map((s: any) => s.name);
   const sizeBreakStores = storesData.filter((s: any) => s.sizeBreaksCount > 15).map((s: any) => s.name);
@@ -36,7 +18,7 @@ const generateHeuristicAdvice = (storesData: any[], params: any) => {
   const redStores = storesData.filter((s: any) => s.status === "RED").map((s: any) => s.name);
 
   let markdown = `### 🤖 Lokale AI heuristische twin-adviseur\n\n`;
-  markdown += `*Let op: de live verbinding met de Gemini API is momenteel niet actief (geen API-sleutel in Secrets). Het systeem draait op de lokale heuristische 'Digital Twin core-engine'.*\n\n`;
+  markdown += `*Let op: de live verbinding met de Claude (Anthropic) API is momenteel niet actief (geen API-sleutel ingesteld). Het systeem draait op de lokale heuristische 'Digital Twin core-engine'.*\n\n`;
   
   markdown += `#### 📊 Algemene statusanalyse\n`;
   markdown += `U heeft momenteel **${storesData.length} winkels** geconfigureerd in uw simulatiemodel. \n`;
@@ -93,16 +75,16 @@ app.post("/api/advisor", async (req, res) => {
     return res.status(400).json({ error: "Missing campaign data or store parameters" });
   }
 
-  const ai = getGeminiClient();
-  
-  if (!ai) {
-    // Return local heuristic response if apiKey isn't configured
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!apiKey) {
+    // Return local heuristic response if the Anthropic key isn't configured
     const advice = generateHeuristicAdvice(storesData, params);
     return res.json({ advice, source: "heuristic" });
   }
 
   try {
-    // Construct rich context prompt for Gemini
+    // Construct rich context prompt for Claude
     const systemPrompt = `
       Je bent de 'Digital Twin Intelligence Engine' voor een schoenenretail-directeur van een keten met 5 winkels.
       Analyseer de geleverde JSON data over de retailers-stores en de actieve scenario-parameters van de directeur.
@@ -140,18 +122,26 @@ app.post("/api/advisor", async (req, res) => {
       `).join("\n")}
     `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: userPrompt,
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.7,
-      }
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: process.env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }],
+      }),
     });
+    const data = await resp.json();
+    const advice = data?.content?.[0]?.text || "";
 
-    res.json({ advice: response.text, source: "gemini" });
+    res.json({ advice, source: "claude" });
   } catch (error: any) {
-    console.error("Gemini Advisor Request failed:", error);
+    console.error("Claude Advisor Request failed:", error);
     // Fallback to local heuristic response
     const advice = generateHeuristicAdvice(storesData, params);
     res.json({ advice, source: "error-fallback", errorMessage: error.message });

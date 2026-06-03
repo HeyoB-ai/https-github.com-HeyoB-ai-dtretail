@@ -255,14 +255,14 @@ export default function App() {
   // 3. AI Strategic Advisor Chat Drawer
   const [adviceText, setAdviceText] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-  const [adviceSource, setAdviceSource] = useState<"gemini" | "heuristic" | "error-fallback" | null>(null);
+  const [adviceSource, setAdviceSource] = useState<"claude" | "heuristic" | "error-fallback" | null>(null);
   const [advisorExpanded, setAdvisorExpanded] = useState<boolean>(true);
 
-  // Trigger Gemini Analysis based on active parameters
+  // Trigger Claude (Anthropic) Analysis based on active parameters
   const requestAIAdvice = async () => {
     setIsAnalyzing(true);
     setAdviceText("");
-    addLog("AI Advies aangevraagd. Analyseert live simulatie-variabelen via Gemini 3.5...");
+    addLog("AI Advies aangevraagd. Analyseert live simulatie-variabelen via Claude (Anthropic)...");
 
     try {
       const response = await fetch("/api/advisor", {
@@ -278,15 +278,15 @@ export default function App() {
       setAdviceText(data.advice || "Geen advies ontvangen.");
       setAdviceSource(data.source);
 
-      if (data.source === "gemini") {
-        addLog("AI Strategisch Rapport succesvol gegenereerd via Gemini 3.5");
+      if (data.source === "claude") {
+        addLog("AI Strategisch Rapport succesvol gegenereerd via Claude (Anthropic)");
       } else {
         addLog("Heuristisch Advies gegenereerd (Lokale back-up engine geactiveerd)");
       }
     } catch (err) {
       console.error(err);
       addLog("Fout bij AI aanvraag. Lokale regel-gebaseerde aanbevelingen klaargezet.");
-      setAdviceText("Fout bij verbinden met Gemini API. Controleer uw internetverbinding of API credentials.");
+      setAdviceText("Fout bij verbinden met Claude (Anthropic) API. Controleer uw internetverbinding of API credentials.");
       setAdviceSource("error-fallback");
     } finally {
       setIsAnalyzing(false);
@@ -1453,7 +1453,7 @@ export default function App() {
         {isAnalyzing ? (
           <div className="space-y-3 py-6 text-center text-slate-500">
             <RefreshCw className="w-8 h-8 animate-spin mx-auto text-emerald-500" />
-            <p className="animate-pulse">Gemini 3.5-engine herrekent scenario variabelen & marge prognose...</p>
+            <p className="animate-pulse">Claude (Anthropic) herrekent scenario variabelen & marge prognose...</p>
           </div>
         ) : adviceText ? (
           <div className="text-slate-300">
