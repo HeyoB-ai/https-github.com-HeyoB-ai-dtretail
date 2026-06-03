@@ -257,6 +257,7 @@ export default function App() {
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [adviceSource, setAdviceSource] = useState<"claude" | "heuristic" | "error-fallback" | null>(null);
   const [advisorExpanded, setAdvisorExpanded] = useState<boolean>(true);
+  const [advisorQuestion, setAdvisorQuestion] = useState("");
 
   // Trigger Claude (Anthropic) Analysis based on active parameters
   const requestAIAdvice = async () => {
@@ -270,7 +271,8 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           storesData: currentStores,
-          params: params
+          params: params,
+          question: advisorQuestion
         })
       });
 
@@ -1419,7 +1421,7 @@ export default function App() {
   // Strategic AI advisor panel (advisor)
   const advisorPanel = (
     <div className="bg-[#050505]/40 border border-white/5 p-6 rounded relative space-y-4">
-      <div className="flex justify-between items-center pb-3 border-b border-white/5">
+      <div className="pb-3 border-b border-white/5 space-y-3">
         <div>
           <h2 className="text-sm font-semibold text-white tracking-wide flex items-center gap-2 font-sans">
             <Sparkles className="w-4 h-4 text-emerald-500 animate-pulse" />
@@ -1430,23 +1432,33 @@ export default function App() {
           </p>
         </div>
 
-        <button
-          onClick={requestAIAdvice}
-          disabled={isAnalyzing}
-          className="px-4 py-1.5 bg-[#eaeaea] hover:bg-white disabled:bg-white/5 disabled:text-slate-500 text-black text-xs font-bold rounded border border-white/10 select-none cursor-pointer transition-all flex items-center gap-1.5"
-        >
-          {isAnalyzing ? (
-            <>
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-              Twin analyseren...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-              Vraag AI-advies (instant)
-            </>
-          )}
-        </button>
+        <textarea
+          value={advisorQuestion}
+          onChange={(e) => setAdvisorQuestion(e.target.value)}
+          rows={3}
+          placeholder="Stel een vraag aan de adviseur — of laat leeg voor een volledige analyse"
+          className="w-full bg-[#050505] border border-white/10 rounded px-3 py-2 text-xs text-slate-200 placeholder:text-slate-600 font-sans resize-y focus:outline-none focus:border-emerald-500/60"
+        />
+
+        <div className="flex justify-end">
+          <button
+            onClick={requestAIAdvice}
+            disabled={isAnalyzing}
+            className="px-4 py-1.5 bg-[#eaeaea] hover:bg-white disabled:bg-white/5 disabled:text-slate-500 text-black text-xs font-bold rounded border border-white/10 select-none cursor-pointer transition-all flex items-center gap-1.5"
+          >
+            {isAnalyzing ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                Twin analyseren...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                Vraag AI-advies (instant)
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="bg-[#050505] px-5 pt-6 pb-5 rounded border border-white/5 font-sans text-[13px] leading-relaxed max-h-[460px] overflow-y-auto custom-scrollbar shadow-inner">

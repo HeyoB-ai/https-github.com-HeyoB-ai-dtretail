@@ -69,7 +69,7 @@ app.get("/api/health", (req, res) => {
 
 // API: Advisor - Generative strategic feedback based on twin state
 app.post("/api/advisor", async (req, res) => {
-  const { storesData, params } = req.body;
+  const { storesData, params, question } = req.body;
 
   if (!storesData || !params) {
     return res.status(400).json({ error: "Missing campaign data or store parameters" });
@@ -99,7 +99,7 @@ app.post("/api/advisor", async (req, res) => {
       6. Schrijf de tekst in elegante markdown met heldere koppen en bulletpoints. Vermijd jargon en 'buzzwords' van lage kwaliteit. Spreek de directeur aan met 'Directeur' of 'U'.
     `;
 
-    const userPrompt = `
+    let userPrompt = `
       --- SIMULATIE PARAMETERS ---
       - Globale Kortingsboost: +${params.globalDiscountBoost}% (huidig niveau)
       - Personeelsbezetting Ratio: ${params.staffPlanningRatio}x ten opzichte van regulier
@@ -121,6 +121,11 @@ app.post("/api/advisor", async (req, res) => {
         - Online Mismatch regio search hits: ${s.mismatchSearchHits} (online zoekopdrachten naar niet-voorradige maten lokaal)
       `).join("\n")}
     `;
+
+    // Als de directeur een specifieke vraag stelt, voeg die toe; anders volledige analyse
+    if (typeof question === "string" && question.trim()) {
+      userPrompt += "\n\nVraag van de directeur: " + question + "\n\nBeantwoord deze vraag concreet op basis van bovenstaande digital-twin data.";
+    }
 
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",

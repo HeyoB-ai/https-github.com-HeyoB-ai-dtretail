@@ -55,9 +55,9 @@ export const handler = async (event) => {
     return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
 
-  let storesData, params;
+  let storesData, params, question;
   try {
-    ({ storesData, params } = JSON.parse(event.body || "{}"));
+    ({ storesData, params, question } = JSON.parse(event.body || "{}"));
   } catch (e) {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body" }) };
   }
@@ -90,7 +90,7 @@ export const handler = async (event) => {
       6. Schrijf de tekst in elegante markdown met heldere koppen en bulletpoints. Vermijd jargon en 'buzzwords' van lage kwaliteit. Spreek de directeur aan met 'Directeur' of 'U'.
     `;
 
-    const userPrompt = `
+    let userPrompt = `
       --- SIMULATIE PARAMETERS ---
       - Globale Kortingsboost: +${params.globalDiscountBoost}% (huidig niveau)
       - Personeelsbezetting Ratio: ${params.staffPlanningRatio}x ten opzichte van regulier
@@ -112,6 +112,11 @@ export const handler = async (event) => {
         - Online Mismatch regio search hits: ${s.mismatchSearchHits} (online zoekopdrachten naar niet-voorradige maten lokaal)
       `).join("\n")}
     `;
+
+    // Als de directeur een specifieke vraag stelt, voeg die toe; anders volledige analyse
+    if (typeof question === "string" && question.trim()) {
+      userPrompt += "\n\nVraag van de directeur: " + question + "\n\nBeantwoord deze vraag concreet op basis van bovenstaande digital-twin data.";
+    }
 
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
