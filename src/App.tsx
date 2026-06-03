@@ -1488,6 +1488,13 @@ export default function App() {
             <span className="text-[10px] text-slate-500 font-mono">{ds.lastSync}</span>
           </div>
         ))}
+        <div className="flex items-center justify-between py-1 border-b border-white/5 last:border-0 font-mono">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+            <span className="text-slate-300 font-sans">Bank / PSD2 (Open Banking)</span>
+          </div>
+          <span className="text-[10px] text-slate-500 font-mono">Sandbox · consent vereist</span>
+        </div>
       </div>
     </div>
   );
