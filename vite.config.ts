@@ -7,9 +7,9 @@ export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
     css: {
-      // Tailwind v4 wordt door de @tailwindcss/vite plugin afgehandeld.
-      // Lege inline PostCSS-config zodat Vite niet omhoog zoekt naar een
-      // ongerelateerde parent postcss.config.js (Tailwind v3) in de home-map.
+      // Tailwind v4 is handled by the @tailwindcss/vite plugin above.
+      // Pass an inline (empty) PostCSS config so Vite does NOT walk up the
+      // directory tree and pick up an unrelated parent postcss.config.js.
       postcss: {},
     },
     resolve: {

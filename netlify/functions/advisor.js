@@ -1,15 +1,4 @@
-import express from "express";
-import path from "path";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const app = express();
-const PORT = 3000;
-
-app.use(express.json());
 
 // Initialize Gemini SDK with telemetry header
 const getGeminiClient = () => {
@@ -29,15 +18,15 @@ const getGeminiClient = () => {
 };
 
 // Heuristic fallback advice in Dutch if Gemini Key is not available or fails
-const generateHeuristicAdvice = (storesData: any[], params: any) => {
-  const lowMarginStores = storesData.filter((s: any) => s.grossMarginPercent < 40).map((s: any) => s.name);
-  const sizeBreakStores = storesData.filter((s: any) => s.sizeBreaksCount > 15).map((s: any) => s.name);
-  const sickStores = storesData.filter((s: any) => s.sickLeavePercent > 5).map((s: any) => s.name);
-  const redStores = storesData.filter((s: any) => s.status === "RED").map((s: any) => s.name);
+const generateHeuristicAdvice = (storesData, params) => {
+  const lowMarginStores = storesData.filter((s) => s.grossMarginPercent < 40).map((s) => s.name);
+  const sizeBreakStores = storesData.filter((s) => s.sizeBreaksCount > 15).map((s) => s.name);
+  const sickStores = storesData.filter((s) => s.sickLeavePercent > 5).map((s) => s.name);
+  const redStores = storesData.filter((s) => s.status === "RED").map((s) => s.name);
 
   let markdown = `### 🤖 Lokale AI heuristische twin-adviseur\n\n`;
   markdown += `*Let op: de live verbinding met de Gemini API is momenteel niet actief (geen API-sleutel in Secrets). Het systeem draait op de lokale heuristische 'Digital Twin core-engine'.*\n\n`;
-  
+
   markdown += `#### 📊 Algemene statusanalyse\n`;
   markdown += `U heeft momenteel **${storesData.length} winkels** geconfigureerd in uw simulatiemodel. \n`;
   if (redStores.length > 0) {
@@ -47,7 +36,7 @@ const generateHeuristicAdvice = (storesData: any[], params: any) => {
   }
 
   markdown += `#### 🔍 Knelpunten & aanbevelingen\n`;
-  
+
   if (params.weatherScenario === "rainy") {
     markdown += `🌧️ **Weersinvloed (regenachtig):** De fysieke passantenstroom is met 15% gedaald. Laarzen en onderhoudsproducten verkopen sterk, maar sneakers liggen stil. \n`;
     markdown += `*Advies:* Promoot onderhoudssprays bij elke kassa-transactie. Verhoog de online advertentieradius voor de webshop.\n\n`;
@@ -76,29 +65,32 @@ const generateHeuristicAdvice = (storesData: any[], params: any) => {
 
   markdown += `#### 💡 Strategische simulatieprojectie\n`;
   markdown += `- **Huidige prijsmarge-correctie:** ${params.priceAdjustment > 0 ? `+${params.priceAdjustment}%` : `${params.priceAdjustment}%`}. Dit heeft een direct effect op uw landelijke **GMROI**.`;
-  
+
   return markdown;
 };
 
-// API: Check health
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
-});
+export const handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
+  }
 
-// API: Advisor - Generative strategic feedback based on twin state
-app.post("/api/advisor", async (req, res) => {
-  const { storesData, params } = req.body;
+  let storesData, params;
+  try {
+    ({ storesData, params } = JSON.parse(event.body || "{}"));
+  } catch (e) {
+    return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body" }) };
+  }
 
   if (!storesData || !params) {
-    return res.status(400).json({ error: "Missing campaign data or store parameters" });
+    return { statusCode: 400, body: JSON.stringify({ error: "Missing campaign data or store parameters" }) };
   }
 
   const ai = getGeminiClient();
-  
+
   if (!ai) {
     // Return local heuristic response if apiKey isn't configured
     const advice = generateHeuristicAdvice(storesData, params);
-    return res.json({ advice, source: "heuristic" });
+    return { statusCode: 200, body: JSON.stringify({ advice, source: "heuristic" }) };
   }
 
   try {
@@ -107,7 +99,7 @@ app.post("/api/advisor", async (req, res) => {
       Je bent de 'Digital Twin Intelligence Engine' voor een schoenenretail-directeur van een keten met 5 winkels.
       Analyseer de geleverde JSON data over de retailers-stores en de actieve scenario-parameters van de directeur.
       Schrijf een uiterst scherpe, professionele en to-the-point strategische analyse in het Nederlands.
-      
+
       Richtlijnen voor je antwoord:
       1. Gebruik concrete getallen en winkelnamen uit de meegestuurde data.
       2. Noem direct welke winkels in 'Stoplicht status RED/ORANGE' staan en waarom.
@@ -127,7 +119,7 @@ app.post("/api/advisor", async (req, res) => {
       - Actieve Lokale Campagne Winkel ID: ${params.activeLocalCampaignStoreId}
 
       --- WINKELS STATUS RAPPORT ---
-      ${storesData.map((s: any) => `
+      ${storesData.map((s) => `
       * Winkel: ${s.name} (Stad: ${s.city})
         - Status: ${s.status} (Stoplicht)
         - Omzet: €${s.revenue.toLocaleString("nl-NL")} | Brutomarge%: ${s.grossMarginPercent}% | EBITDA: €${s.ebitda.toLocaleString("nl-NL")}
@@ -149,34 +141,11 @@ app.post("/api/advisor", async (req, res) => {
       }
     });
 
-    res.json({ advice: response.text, source: "gemini" });
-  } catch (error: any) {
+    return { statusCode: 200, body: JSON.stringify({ advice: response.text, source: "gemini" }) };
+  } catch (error) {
     console.error("Gemini Advisor Request failed:", error);
     // Fallback to local heuristic response
     const advice = generateHeuristicAdvice(storesData, params);
-    res.json({ advice, source: "error-fallback", errorMessage: error.message });
+    return { statusCode: 200, body: JSON.stringify({ advice, source: "error-fallback", errorMessage: error.message }) };
   }
-});
-
-// Setup Vite development server or production assets
-async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
-  }
-
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Digital Twin Server listening on port ${PORT}`);
-  });
-}
-
-startServer();
+};
