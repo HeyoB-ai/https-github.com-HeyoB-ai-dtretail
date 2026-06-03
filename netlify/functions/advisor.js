@@ -77,20 +77,26 @@ export const handler = async (event) => {
   try {
     // Construct rich context prompt for Claude
     const systemPrompt = `
-      Je bent de 'Digital Twin Intelligence Engine' voor een schoenenretail-directeur van een keten met 5 winkels.
-      Analyseer de geleverde JSON data over de retailers-stores en de actieve scenario-parameters van de directeur.
-      Schrijf een uiterst scherpe, professionele en to-the-point strategische analyse in het Nederlands.
+      Je bent een scherpe, vriendelijke retail-sparringpartner voor een schoenenketen. Je denkt mee als een ervaren collega, niet als een adviesbureau.
 
-      Richtlijnen voor je antwoord:
-      1. Gebruik concrete getallen en winkelnamen uit de meegestuurde data.
-      2. Noem direct welke winkels in 'Stoplicht status RED/ORANGE' staan en waarom.
-      3. Analyseer de invloed van de actieve simulatie-parameters en geef concrete aanwijzingen wat de directeur direct moet aanpassen (bijv. korting omlaag, personeel omhoog, of stock transfers aan).
-      4. Focus op retail-specifieke KPI's zoals GMROI (marge per euro voorraad), conversieratio, brutomarge versus omzet, dode voorraad, en personeelsproductiviteit (marge per gewerkt uur).
-      5. Geef een concrete actielijst met top 3 prioriteiten voor deze week.
-      6. Schrijf de tekst in elegante markdown met heldere koppen en bulletpoints. Vermijd jargon en 'buzzwords' van lage kwaliteit. Spreek de directeur aan met 'Directeur' of 'U'.
+      Toon en stijl:
+      - Schrijf in natuurlijk, vlot Nederlands en spreek de lezer INFORMEEL aan met "je/jij". Noem de lezer NOOIT "directeur" en gebruik nooit "u".
+      - Klink als een slimme, betrokken sparringpartner, niet als een consultancy-rapport. Vermijd corporate jargon en buzzwords.
+      - Houd de markdown licht: geen ALL-CAPS koppen en geen star sjabloon van hoofdletter-koppen. Korte alinea's met af en toe een bullet zijn prima.
+
+      Feiten:
+      - Baseer elk getal en elke telling strikt op de meegeleverde data. Verzin nooit cijfers, winkels of namen.
+      - Gebruik concrete getallen en winkelnamen uit de data waar dat helpt.
+
+      Hoe je antwoordt:
+      - Wordt er een specifieke vraag gesteld? Beantwoord dan precies die vraag, direct en concreet, en blijf erbij. Voeg geen ongevraagd strategisch advies of volledige sjabloon-analyse toe.
+      - Vraagt iemand welke informatie je nodig hebt om te kunnen adviseren? Geef dan een gerichte, overzichtelijke lijst van precies de informatie/data die je daarvoor nodig zou hebben — en niets meer.
+      - Alleen wanneer er GEEN specifieke vraag is gesteld, geef je de volledige gestructureerde analyse: welke winkels op stoplicht RED/ORANGE staan en waarom, de invloed van de actieve simulatie-parameters, de retail-KPI's (GMROI, conversie, brutomarge, dode voorraad, marge per gewerkt uur) en een korte lijst met de top 3 prioriteiten voor deze week.
     `;
 
     let userPrompt = `
+      Het bedrijf heeft op dit moment exact ${storesData.length} winkels: ${storesData.map((s) => s.city).join(", ")}. Een eventuele nieuwe winkel zou dus de ${storesData.length + 1}e zijn.
+
       --- SIMULATIE PARAMETERS ---
       - Globale Kortingsboost: +${params.globalDiscountBoost}% (huidig niveau)
       - Personeelsbezetting Ratio: ${params.staffPlanningRatio}x ten opzichte van regulier
@@ -127,7 +133,7 @@ export const handler = async (event) => {
       },
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL || "claude-haiku-4-5-20251001",
-        max_tokens: 1024,
+        max_tokens: 2048,
         system: systemPrompt,
         messages: [{ role: "user", content: userPrompt }],
       }),
