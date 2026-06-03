@@ -29,11 +29,25 @@ import {
   BarChart,
   HelpCircle,
   AlertCircle,
-  Snowflake
+  Snowflake,
+  Landmark
 } from "lucide-react";
 
 import { Store, SimulationParams, Alert, DataSource } from "./types";
 import { getInitialStoresData, runSimulation, getLiveAlerts, getDataSources } from "./data";
+
+// DEMO bank feed. In productie vervangen door een SERVER-SIDE aanroep naar een
+// licensed PSD2/AIS-aggregator (bijv. GoCardless Bank Account Data, Tink, TrueLayer),
+// met expliciete toestemming (consent) van de rekeninghouder. Nooit bankcredentials client-side.
+function fetchBankData(stores) {
+  return stores.map(s => ({
+    id: s.id,
+    city: s.city,
+    balance: Math.round(s.revenue * 0.55),   // gesimuleerd kassaldo (ex btw)
+    monthlyCashflow: s.ebitda,                // proxy voor maandelijkse cashflow
+    inventoryValue: s.totalStockValue,
+  }));
+}
 
 export default function App() {
   // 1. Core States
@@ -64,6 +78,13 @@ export default function App() {
   const currentStores = useMemo(() => {
     return runSimulation(baseStores, params);
   }, [baseStores, params]);
+
+  // Financiën-laag: afgeleid uit de gesimuleerde winkeldata via de fetchBankData-naad (PSD2-klaar)
+  const bankData = fetchBankData(currentStores);
+  const finKas = bankData.reduce((a, b) => a + b.balance, 0);
+  const finCashflow = bankData.reduce((a, b) => a + b.monthlyCashflow, 0);
+  const finVoorraad = bankData.reduce((a, b) => a + b.inventoryValue, 0);
+  const finWerkkapitaal = finKas + finVoorraad;
 
   // Derive warnings and alerts based on current simulation outcome
   const currentAlerts = useMemo(() => {
@@ -430,7 +451,7 @@ export default function App() {
                       : "normal"
                   }
                   onChange={(e) => {
-                    handleScenarioPreset(e.target.value);
+                    handleScenarioPreset(e.target.value as "rainy_weekend" | "sale_clearance" | "optimized_staff" | "normal");
                   }}
                   className="w-full bg-[#050505] border border-white/10 rounded px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
                 >
@@ -1401,6 +1422,56 @@ export default function App() {
                 Druk op de knop om de strategische digital-twin adviseur te activeren.
               </div>
             )}
+          </div>
+        </div>
+
+        {/* FINANCIËN — KASPOSITIE & CASHFLOW (afgeleid; in productie via PSD2/Open Banking) */}
+        <div className="space-y-6">
+          <div className="bg-amber-500/5 border border-amber-500/20 text-amber-300 rounded p-3 text-[11px] font-mono flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <span>Gesimuleerde cijfers — in productie gekoppeld via PSD2/Open Banking (AISP) met toestemming, volledig server-side.</span>
+          </div>
+          <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+            <Landmark className="w-4 h-4 text-emerald-500" />
+            <h2 className="text-sm font-semibold text-white tracking-wide font-sans">Financiën — kaspositie &amp; cashflow</h2>
+            <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">alle bedragen ex btw</span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">KASPOSITIE KETEN</span>
+              <span className="mt-3 text-lg md:text-xl font-light font-mono text-emerald-400 tracking-tight tabular-nums">€{finKas.toLocaleString("nl-NL")}</span>
+            </div>
+            <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">CASHFLOW / MND</span>
+              <span className={`mt-3 text-lg md:text-xl font-light font-mono tracking-tight tabular-nums ${finCashflow >= 0 ? "text-emerald-400" : "text-rose-400"}`}>€{finCashflow.toLocaleString("nl-NL")}</span>
+            </div>
+            <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">VOORRAADWAARDE</span>
+              <span className="mt-3 text-lg md:text-xl font-light font-mono text-white tracking-tight tabular-nums">€{finVoorraad.toLocaleString("nl-NL")}</span>
+            </div>
+            <div className="bg-[#0f0f0f] border border-white/5 p-4 rounded flex flex-col justify-between hover:border-white/20 transition-all duration-300">
+              <span className="text-slate-400 text-[10px] uppercase tracking-wider font-mono">WERKKAPITAAL</span>
+              <span className="mt-3 text-lg md:text-xl font-light font-mono text-white tracking-tight tabular-nums">€{finWerkkapitaal.toLocaleString("nl-NL")}</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {bankData.map(b => (
+              <div key={b.id} className="bg-[#0f0f0f] border border-white/5 rounded p-3 space-y-2 hover:border-white/10 transition-all duration-300">
+                <div className="text-xs font-semibold text-slate-200 uppercase tracking-wide font-sans">{b.city}</div>
+                <div className="flex justify-between text-[11px] font-mono">
+                  <span className="text-slate-500">Saldo:</span>
+                  <span className="text-emerald-400 font-bold tabular-nums">€{b.balance.toLocaleString("nl-NL")}</span>
+                </div>
+                <div className="flex justify-between text-[11px] font-mono">
+                  <span className="text-slate-500">Cashflow / mnd:</span>
+                  <span className={`tabular-nums ${b.monthlyCashflow >= 0 ? "text-slate-300" : "text-rose-400"}`}>€{b.monthlyCashflow.toLocaleString("nl-NL")}</span>
+                </div>
+                <div className="flex justify-between text-[11px] font-mono">
+                  <span className="text-slate-500">Voorraadwaarde:</span>
+                  <span className="text-slate-300 tabular-nums">€{b.inventoryValue.toLocaleString("nl-NL")}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
